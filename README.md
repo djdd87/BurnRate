@@ -8,6 +8,12 @@ A Windows system tray application that monitors your [Claude Code](https://docs.
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 ![.NET](https://img.shields.io/badge/.NET-10-purple)
 
+## Support This Project
+
+If you find ClaudeMon useful, consider buying me a coffee!
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/djdd87)
+
 ## Screenshots
 
 <!-- Dashboard popup -->
