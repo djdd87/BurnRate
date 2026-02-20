@@ -105,7 +105,12 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
 
             if (jsonlStats.TryGetValue(todayUtc, out var todayJsonl))
             {
-                summary.TodayMessages = todayJsonl.Messages;
+                // Use JSONL for token counts only - stats-cache is updated periodically
+                // so today's tokens may be stale, but JSONL has the current figures.
+                // TodayMessages is NOT taken from JSONL: JSONL type="user" entries include
+                // tool results (which the API sends as user-role messages), making the count
+                // wildly inflated. stats-cache.MessageCount is computed correctly by Claude
+                // Code and should be used as-is.
                 summary.TodayTokens = todayJsonl.OutputTokens;
             }
 
