@@ -95,6 +95,12 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
             var creds = await _dataService.GetCredentialsAsync();
             var summary = _calculator.Calculate(stats, creds);
 
+            // stats-cache.json is only recomputed periodically by Claude Code, so "today"
+            // figures can be stale. Read directly from JSONL files for live accuracy.
+            var (todayMessages, todayTokens) = await _dataService.GetTodayJsonlStatsAsync();
+            summary.TodayMessages = todayMessages;
+            summary.TodayTokens = todayTokens;
+
             // Try live API for accurate percentages (isolated so local stats still work on failure)
             try
             {

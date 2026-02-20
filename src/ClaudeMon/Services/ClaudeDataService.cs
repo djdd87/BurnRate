@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text.Json;
 using ClaudeMon.Helpers;
 using ClaudeMon.Models;
 
@@ -38,6 +39,80 @@ public class ClaudeDataService
     /// </summary>
     public async Task<ClaudeConfig?> GetConfigAsync()
         => await JsonFileReader.ReadAsync<ClaudeConfig>(Path.Combine(_claudePath, ".claude.json"));
+
+    /// <summary>
+    /// Counts today's messages and tokens by scanning JSONL conversation files
+    /// under the projects/ subdirectory. stats-cache.json is only updated
+    /// periodically by Claude Code itself, so this gives live "today" figures.
+    /// Only files modified today are read to keep the scan fast.
+    /// </summary>
+    public async Task<(int Messages, long Tokens)> GetTodayJsonlStatsAsync()
+    {
+        var projectsDir = Path.Combine(_claudePath, "projects");
+        if (!Directory.Exists(projectsDir))
+            return (0, 0);
+
+        var todayUtc = DateTime.UtcNow.Date;
+        int messages = 0;
+        long tokens = 0;
+
+        foreach (var file in Directory.EnumerateFiles(projectsDir, "*.jsonl", SearchOption.AllDirectories))
+        {
+            // Skip files not touched today — avoids reading the entire history.
+            if (File.GetLastWriteTimeUtc(file).Date < todayUtc)
+                continue;
+
+            try
+            {
+                using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using var reader = new StreamReader(stream, System.Text.Encoding.UTF8);
+
+                string? line;
+                while ((line = await reader.ReadLineAsync()) is not null)
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    using var doc = JsonDocument.Parse(line);
+                    var root = doc.RootElement;
+
+                    // Only count entries from today (UTC).
+                    if (!root.TryGetProperty("timestamp", out var tsProp)) continue;
+                    if (!DateTime.TryParse(tsProp.GetString(), null,
+                            System.Globalization.DateTimeStyles.RoundtripKind, out var ts)) continue;
+                    if (ts.Date != todayUtc) continue;
+
+                    if (!root.TryGetProperty("type", out var typeProp)) continue;
+
+                    switch (typeProp.GetString())
+                    {
+                        case "user":
+                            messages++;
+                            break;
+
+                        case "assistant":
+                            if (root.TryGetProperty("message", out var msgEl) &&
+                                msgEl.TryGetProperty("usage", out var usageEl))
+                            {
+                                tokens += GetLong(usageEl, "input_tokens");
+                                tokens += GetLong(usageEl, "output_tokens");
+                                tokens += GetLong(usageEl, "cache_creation_input_tokens");
+                                tokens += GetLong(usageEl, "cache_read_input_tokens");
+                            }
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[GetTodayJsonlStats] {file}: {ex.Message}");
+            }
+        }
+
+        return (messages, tokens);
+
+        static long GetLong(JsonElement el, string prop) =>
+            el.TryGetProperty(prop, out var v) && v.TryGetInt64(out var n) ? n : 0;
+    }
 
     /// <summary>
     /// Reads all session-meta JSON files from the last N days.
