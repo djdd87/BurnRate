@@ -234,6 +234,15 @@
                                 BorderThickness="1"
                                 Padding="10,5"
                                 Margin="0,0,6,0">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedProfile.Usage.EstimatedCostUsd}" Value="0">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="EST. COST  "
                                            FontSize="10" FontWeight="SemiBold"
@@ -252,6 +261,18 @@
                                 BorderBrush="{StaticResource BgCardHoverBrush}"
                                 BorderThickness="1"
                                 Padding="10,5">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedProfile.Usage.TimeSavedFormatted}" Value="0s">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SelectedProfile.Usage.TimeSavedFormatted}" Value="—">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="TIME SAVED  "
                                            FontSize="10" FontWeight="SemiBold"
