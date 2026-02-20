@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ClaudeMon",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/ClaudeMon/bin/Debug/net8.0-windows/ClaudeMon.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/ClaudeMon",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    }
+  ]
+}

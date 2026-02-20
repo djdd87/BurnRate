@@ -1,0 +1,118 @@
+using System.Collections.ObjectModel;
+using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using ClaudeMon.Helpers;
+using ClaudeMon.Models;
+using ClaudeMon.Services;
+using ClaudeMon.Views;
+
+namespace ClaudeMon.ViewModels;
+
+public partial class MainViewModel : ObservableObject, IDisposable
+{
+    private MainWindow? _mainWindow;
+    private bool _disposed;
+
+    [ObservableProperty]
+    private ObservableCollection<ProfileViewModel> _profiles = [];
+
+    [ObservableProperty]
+    private ProfileViewModel? _selectedProfile;
+
+    [ObservableProperty]
+    private bool _isWindowVisible;
+
+    /// <summary>
+    /// Convenience binding: the Usage of the currently selected profile.
+    /// </summary>
+    public UsageSummary? Usage => SelectedProfile?.Usage;
+
+    public MainViewModel() { }
+
+    public void AddProfile(ProfileViewModel profile)
+    {
+        profile.TrayLeftClicked += OnProfileTrayClicked;
+        Profiles.Add(profile);
+        SelectedProfile ??= profile;
+    }
+
+    public void InitializeAll()
+    {
+        foreach (var profile in Profiles)
+            profile.Initialize();
+    }
+
+    partial void OnSelectedProfileChanged(ProfileViewModel? value)
+    {
+        OnPropertyChanged(nameof(Usage));
+
+        // Re-subscribe to usage changes on the selected profile
+        if (value != null)
+        {
+            value.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ProfileViewModel.Usage) && value == SelectedProfile)
+                    OnPropertyChanged(nameof(Usage));
+            };
+        }
+    }
+
+    private void OnProfileTrayClicked(ProfileViewModel profile)
+    {
+        SelectedProfile = profile;
+
+        if (IsWindowVisible)
+            HideWindow();
+        else
+            ShowWindow();
+    }
+
+    [RelayCommand]
+    private void ShowWindow()
+    {
+        if (_mainWindow == null || !_mainWindow.IsLoaded)
+        {
+            _mainWindow = new MainWindow { DataContext = this };
+            _mainWindow.Closed += (_, _) =>
+            {
+                IsWindowVisible = false;
+                _mainWindow = null;
+            };
+        }
+
+        _mainWindow.DataContext = this;
+        WindowPositioner.PositionNearTray(_mainWindow);
+        _mainWindow.Show();
+        _mainWindow.Activate();
+        IsWindowVisible = true;
+    }
+
+    [RelayCommand]
+    private void HideWindow()
+    {
+        _mainWindow?.Hide();
+        IsWindowVisible = false;
+    }
+
+    [RelayCommand]
+    private void ExitApplication()
+    {
+        Dispose();
+        Application.Current.Shutdown();
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+
+        _mainWindow?.Close();
+
+        foreach (var profile in Profiles)
+        {
+            profile.TrayLeftClicked -= OnProfileTrayClicked;
+            profile.Dispose();
+        }
+    }
+}
