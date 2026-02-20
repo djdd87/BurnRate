@@ -210,7 +210,7 @@
                         <controls:StatCard Label="TODAY MSGS"
                                            Value="{Binding SelectedProfile.Usage.TodayMessages, Mode=OneWay}" />
 
-                        <controls:StatCard Label="TODAY TOKENS"
+                        <controls:StatCard Label="TODAY OUT TOKENS"
                                            Value="{Binding SelectedProfile.Usage.TodayTokens,
                                                    Converter={StaticResource TokenFormatter},
                                                    Mode=OneWay}" />

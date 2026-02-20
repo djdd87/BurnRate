@@ -93,9 +93,6 @@ public class ClaudeDataService
                             if (root.TryGetProperty("message", out var msgEl) &&
                                 msgEl.TryGetProperty("usage", out var usageEl))
                             {
-                                // Match stats-cache tokensByModel: input + output only.
-                                // Cache tokens (creation/read) inflate the count by ~700x.
-                                tokens += GetLong(usageEl, "input_tokens");
                                 tokens += GetLong(usageEl, "output_tokens");
                             }
                             break;
