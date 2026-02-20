@@ -1,0 +1,48 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Background layers -->
+    <Color x:Key="BgPrimary">#F8F9FA</Color>
+    <Color x:Key="BgSecondary">#E9ECEF</Color>
+    <Color x:Key="BgCard">#FFFFFF</Color>
+    <Color x:Key="BgCardHover">#F1F3F4</Color>
+
+    <!-- Claude brand accent (unchanged) -->
+    <Color x:Key="AccentPrimary">#D97706</Color>
+    <Color x:Key="AccentSecondary">#F59E0B</Color>
+
+    <!-- Status colors (unchanged) -->
+    <Color x:Key="StatusGreen">#4CAF50</Color>
+    <Color x:Key="StatusAmber">#FF9800</Color>
+    <Color x:Key="StatusRed">#F44336</Color>
+    <Color x:Key="StatusGrey">#9E9E9E</Color>
+
+    <!-- Text -->
+    <Color x:Key="TextPrimary">#111827</Color>
+    <Color x:Key="TextSecondary">#4B5563</Color>
+    <Color x:Key="TextMuted">#6B7280</Color>
+
+    <!-- Theme-specific: gauge ring / bar track -->
+    <Color x:Key="GaugeTrack">#D1D5DB</Color>
+
+    <!-- Theme-specific: activity chart grid line -->
+    <Color x:Key="ChartGridLine">#D1D5DB</Color>
+
+    <!-- Brushes from colors -->
+    <SolidColorBrush x:Key="BgPrimaryBrush"    Color="{StaticResource BgPrimary}" />
+    <SolidColorBrush x:Key="BgSecondaryBrush"  Color="{StaticResource BgSecondary}" />
+    <SolidColorBrush x:Key="BgCardBrush"       Color="{StaticResource BgCard}" />
+    <SolidColorBrush x:Key="BgCardHoverBrush"  Color="{StaticResource BgCardHover}" />
+    <SolidColorBrush x:Key="AccentPrimaryBrush"   Color="{StaticResource AccentPrimary}" />
+    <SolidColorBrush x:Key="AccentSecondaryBrush" Color="{StaticResource AccentSecondary}" />
+    <SolidColorBrush x:Key="StatusGreenBrush"  Color="{StaticResource StatusGreen}" />
+    <SolidColorBrush x:Key="StatusAmberBrush"  Color="{StaticResource StatusAmber}" />
+    <SolidColorBrush x:Key="StatusRedBrush"    Color="{StaticResource StatusRed}" />
+    <SolidColorBrush x:Key="StatusGreyBrush"   Color="{StaticResource StatusGrey}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush"  Color="{StaticResource TextPrimary}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
+    <SolidColorBrush x:Key="TextMutedBrush"    Color="{StaticResource TextMuted}" />
+    <SolidColorBrush x:Key="GaugeTrackBrush"   Color="{StaticResource GaugeTrack}" />
+    <SolidColorBrush x:Key="ChartGridLineBrush" Color="{StaticResource ChartGridLine}" />
+
+</ResourceDictionary>

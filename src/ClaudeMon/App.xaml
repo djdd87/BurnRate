@@ -5,6 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Colors_Dark.xaml" />  <!-- index 0: swapped at runtime by ThemeService -->
                 <ResourceDictionary Source="Themes/DarkTheme.xaml" />
                 <ResourceDictionary Source="Themes/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>

@@ -11,6 +11,7 @@ namespace ClaudeMon.ViewModels;
 
 public partial class MainViewModel : ObservableObject, IDisposable
 {
+    private readonly ThemeService _themeService;
     private MainWindow? _mainWindow;
     private bool _disposed;
 
@@ -23,12 +24,35 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _isWindowVisible;
 
+    [ObservableProperty]
+    private AppThemeMode _themeMode;
+
+    [ObservableProperty]
+    private AppThemeMode _effectiveTheme;
+
     /// <summary>
     /// Convenience binding: the Usage of the currently selected profile.
     /// </summary>
     public UsageSummary? Usage => SelectedProfile?.Usage;
 
-    public MainViewModel() { }
+    public MainViewModel(ThemeService themeService)
+    {
+        _themeService = themeService;
+        _themeMode = themeService.CurrentMode;
+        _effectiveTheme = themeService.EffectiveTheme;
+        _themeService.ThemeChanged += OnThemeServiceChanged;
+    }
+
+    partial void OnThemeModeChanged(AppThemeMode value)
+    {
+        _themeService.SetTheme(value);
+        EffectiveTheme = _themeService.EffectiveTheme;
+    }
+
+    private void OnThemeServiceChanged(AppThemeMode effectiveTheme)
+    {
+        EffectiveTheme = effectiveTheme;
+    }
 
     public void AddProfile(ProfileViewModel profile)
     {
@@ -115,6 +139,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (_disposed) return;
         _disposed = true;
 
+        _themeService.ThemeChanged -= OnThemeServiceChanged;
         _mainWindow?.Close();
 
         foreach (var profile in Profiles)

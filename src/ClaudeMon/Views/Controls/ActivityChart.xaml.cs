@@ -115,13 +115,12 @@ public partial class ActivityChart : UserControl
             {
                 Text = item.DayLabel,
                 FontSize = 10,
-                Foreground = isToday
-                    ? (Brush)FindResource("TextPrimaryBrush")
-                    : (Brush)FindResource("TextMutedBrush"),
                 FontWeight = isToday ? FontWeights.SemiBold : FontWeights.Normal,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 4, 0, 0)
             };
+            label.SetResourceReference(TextBlock.ForegroundProperty,
+                isToday ? "TextPrimaryBrush" : "TextMutedBrush");
             DockPanel.SetDock(label, Dock.Bottom);
             column.Children.Add(label);
 

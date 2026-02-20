@@ -11,6 +11,7 @@ public partial class App : Application
 {
     private SingleInstanceGuard? _guard;
     private MainViewModel? _mainViewModel;
+    private ThemeService? _themeService;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -24,6 +25,9 @@ public partial class App : Application
             Shutdown();
             return;
         }
+
+        _themeService = new ThemeService();
+        _themeService.Initialize();
 
         var config = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
@@ -68,7 +72,7 @@ public partial class App : Application
         }
 
         var calculator = new UsageCalculator(planLimits);
-        _mainViewModel = new MainViewModel();
+        _mainViewModel = new MainViewModel(_themeService);
 
         foreach (var profileConfig in profiles)
         {
@@ -82,6 +86,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         _mainViewModel?.Dispose();
+        _themeService?.Dispose();
         _guard?.Dispose();
         base.OnExit(e);
     }

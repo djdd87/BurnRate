@@ -6,15 +6,6 @@
              mc:Ignorable="d"
              d:DesignWidth="320" d:DesignHeight="200">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/Colors.xaml" />
-                <ResourceDictionary Source="/Themes/Controls.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <Border Style="{StaticResource CardBorder}">
         <StackPanel>
             <!-- Section header -->
@@ -36,7 +27,7 @@
                             <TextBlock Grid.Column="0"
                                        Text="{Binding ModelName}"
                                        FontSize="11"
-                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
                                        VerticalAlignment="Center"
                                        TextTrimming="CharacterEllipsis"
                                        ToolTip="{Binding ModelName}" />
@@ -48,7 +39,7 @@
                                   Height="8"
                                   ToolTip="{Binding FormattedTokens}">
                                 <!-- Full track background -->
-                                <Border Background="#374151"
+                                <Border Background="{DynamicResource GaugeTrackBrush}"
                                         CornerRadius="3" />
                                 <!-- Filled portion using star-width grid -->
                                 <Grid>
@@ -65,7 +56,7 @@
                             <!-- Percentage label -->
                             <TextBlock Grid.Column="2"
                                        FontSize="11"
-                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Foreground="{DynamicResource TextMutedBrush}"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Right">
                                 <TextBlock.Text>
@@ -81,7 +72,7 @@
             <TextBlock x:Name="EmptyState"
                        Text="No model data available"
                        FontSize="11"
-                       Foreground="{StaticResource TextMutedBrush}"
+                       Foreground="{DynamicResource TextMutedBrush}"
                        HorizontalAlignment="Center"
                        Margin="0,8"
                        Visibility="Collapsed" />

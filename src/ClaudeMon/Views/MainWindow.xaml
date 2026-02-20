@@ -20,24 +20,16 @@
         Deactivated="Window_Deactivated">
 
     <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/Colors.xaml" />
-                <ResourceDictionary Source="/Themes/DarkTheme.xaml" />
-                <ResourceDictionary Source="/Themes/Controls.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-
-            <converters:TokenFormatterConverter x:Key="TokenFormatter" />
-            <converters:PercentToColorConverter x:Key="PercentToColor" />
-            <converters:CountToVisibilityConverter x:Key="CountToVisibility" />
-            <converters:EqualityConverter x:Key="EqualityConverter" />
-            <converters:PercentToTextConverter x:Key="PercentToText" />
-        </ResourceDictionary>
+        <converters:TokenFormatterConverter x:Key="TokenFormatter" />
+        <converters:PercentToColorConverter x:Key="PercentToColor" />
+        <converters:CountToVisibilityConverter x:Key="CountToVisibility" />
+        <converters:EqualityConverter x:Key="EqualityConverter" />
+        <converters:PercentToTextConverter x:Key="PercentToText" />
     </Window.Resources>
 
     <!-- Outer Border: rounded corners, dark background, drop shadow -->
     <Border CornerRadius="8"
-            Background="{StaticResource BgPrimaryBrush}"
+            Background="{DynamicResource BgPrimaryBrush}"
             Margin="10">
         <Border.Effect>
             <DropShadowEffect BlurRadius="20"
@@ -56,7 +48,7 @@
 
             <!-- ========== Title Bar ========== -->
             <Border Grid.Row="0"
-                    Background="{StaticResource BgSecondaryBrush}"
+                    Background="{DynamicResource BgSecondaryBrush}"
                     CornerRadius="8,8,0,0"
                     Padding="16,10"
                     MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
@@ -65,6 +57,14 @@
                             Style="{StaticResource CloseButton}"
                             Click="CloseButton_Click"
                             VerticalAlignment="Center" />
+                    <StackPanel DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="0,0,4,0">
+                        <Button x:Name="BtnDark"   Content="Dark"   Style="{StaticResource ThemeToggleButton}" Click="ThemeDark_Click"   Margin="0,0,2,0" />
+                        <Button x:Name="BtnLight"  Content="Light"  Style="{StaticResource ThemeToggleButton}" Click="ThemeLight_Click"  Margin="0,0,2,0" />
+                        <Button x:Name="BtnSystem" Content="System" Style="{StaticResource ThemeToggleButton}" Click="ThemeSystem_Click" />
+                    </StackPanel>
                     <TextBlock Text="ClaudMon"
                                Style="{StaticResource HeaderText}"
                                FontSize="15"
@@ -89,7 +89,7 @@
                                 Tag="{Binding}">
                             <Border.Style>
                                 <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource BgCardBrush}" />
                                     <Style.Triggers>
                                         <DataTrigger Value="True">
                                             <DataTrigger.Binding>
@@ -107,7 +107,7 @@
                             <TextBlock Text="{Binding ProfileName}"
                                        FontSize="12"
                                        FontWeight="SemiBold"
-                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
                                        HorizontalAlignment="Center" />
                         </Border>
                     </DataTemplate>
@@ -139,12 +139,12 @@
 
                             <!-- Weekly percentage -->
                             <TextBlock HorizontalAlignment="Center" FontSize="14" Margin="0,8,0,0">
-                                <Run Text="Weekly: " Foreground="{StaticResource TextSecondaryBrush}" /><Run Text="{Binding SelectedProfile.Usage.WeeklyPercentage, Converter={StaticResource PercentToText}, Mode=OneWay}" Foreground="{Binding SelectedProfile.Usage.WeeklyPercentage, Converter={StaticResource PercentToColor}}" />
+                                <Run Text="Weekly: " Foreground="{DynamicResource TextSecondaryBrush}" /><Run Text="{Binding SelectedProfile.Usage.WeeklyPercentage, Converter={StaticResource PercentToText}, Mode=OneWay}" Foreground="{Binding SelectedProfile.Usage.WeeklyPercentage, Converter={StaticResource PercentToColor}}" />
                             </TextBlock>
 
                             <!-- Reset times -->
                             <TextBlock HorizontalAlignment="Center" FontSize="10"
-                                       Foreground="{StaticResource TextMutedBrush}" Margin="0,3,0,2">
+                                       Foreground="{DynamicResource TextMutedBrush}" Margin="0,3,0,2">
                                 <Run Text="Session resets " /><Run Text="{Binding SelectedProfile.Usage.SessionResetsAt, StringFormat={}{0:h:mm tt}, Mode=OneWay, TargetNullValue='—'}" /><Run Text="  ·  Wk resets " /><Run Text="{Binding SelectedProfile.Usage.WeeklyResetsAt, StringFormat={}{0:MMM dd h:mm tt}, Mode=OneWay, TargetNullValue='—'}" />
                             </TextBlock>
 
@@ -216,8 +216,8 @@
                                 HorizontalAlignment="Center"
                                 Margin="0,0,0,12">
                         <Border CornerRadius="12"
-                                Background="{StaticResource BgCardBrush}"
-                                BorderBrush="{StaticResource BgCardHoverBrush}"
+                                Background="{DynamicResource BgCardBrush}"
+                                BorderBrush="{DynamicResource BgCardHoverBrush}"
                                 BorderThickness="1"
                                 Padding="10,5"
                                 Margin="0,0,6,0">
@@ -233,10 +233,10 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="EST. COST  "
                                            FontSize="10" FontWeight="SemiBold"
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            VerticalAlignment="Center" />
                                 <TextBlock FontSize="11" FontWeight="Bold"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
                                            VerticalAlignment="Center">
                                     <Run Text="$" /><Run Text="{Binding SelectedProfile.Usage.EstimatedCostUsd, StringFormat={}{0:F2}, Mode=OneWay}" />
                                 </TextBlock>
@@ -244,8 +244,8 @@
                         </Border>
 
                         <Border CornerRadius="12"
-                                Background="{StaticResource BgCardBrush}"
-                                BorderBrush="{StaticResource BgCardHoverBrush}"
+                                Background="{DynamicResource BgCardBrush}"
+                                BorderBrush="{DynamicResource BgCardHoverBrush}"
                                 BorderThickness="1"
                                 Padding="10,5">
                             <Border.Style>
@@ -263,11 +263,11 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="TIME SAVED  "
                                            FontSize="10" FontWeight="SemiBold"
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            VerticalAlignment="Center" />
                                 <TextBlock Text="{Binding SelectedProfile.Usage.TimeSavedFormatted, Mode=OneWay}"
                                            FontSize="11" FontWeight="Bold"
-                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
                                            VerticalAlignment="Center" />
                             </StackPanel>
                         </Border>
@@ -285,7 +285,7 @@
 
             <!-- ========== Footer ========== -->
             <Border Grid.Row="3"
-                    Background="{StaticResource BgSecondaryBrush}"
+                    Background="{DynamicResource BgSecondaryBrush}"
                     CornerRadius="0,0,8,8"
                     Padding="16,8">
                 <TextBlock Style="{StaticResource LabelText}"

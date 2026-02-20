@@ -6,21 +6,13 @@
              mc:Ignorable="d"
              d:DesignWidth="180" d:DesignHeight="200">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/Colors.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <!-- Gauge area -->
         <Canvas Width="160" Height="160">
             <!-- Background track: full circle -->
             <Ellipse Width="140" Height="140"
                      Canvas.Left="10" Canvas.Top="10"
-                     Stroke="#374151"
+                     Stroke="{DynamicResource GaugeTrackBrush}"
                      StrokeThickness="10"
                      Fill="Transparent" />
 
@@ -37,7 +29,7 @@
                        Text="~0%"
                        FontSize="28"
                        FontWeight="Bold"
-                       Foreground="{StaticResource TextPrimaryBrush}"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
                        TextAlignment="Center">
                 <TextBlock.RenderTransform>
                     <TranslateTransform x:Name="PercentageTextTranslate" />
@@ -49,7 +41,7 @@
                        Canvas.Left="80" Canvas.Top="92"
                        Text="Est."
                        FontSize="12"
-                       Foreground="{StaticResource TextMutedBrush}"
+                       Foreground="{DynamicResource TextMutedBrush}"
                        TextAlignment="Center">
                 <TextBlock.RenderTransform>
                     <TranslateTransform x:Name="EstLabelTranslate" />
@@ -61,7 +53,7 @@
         <TextBlock x:Name="TierInfoText"
                    Text="{Binding TierText, RelativeSource={RelativeSource AncestorType=UserControl}}"
                    FontSize="11"
-                   Foreground="{StaticResource TextSecondaryBrush}"
+                   Foreground="{DynamicResource TextSecondaryBrush}"
                    HorizontalAlignment="Center"
                    Margin="0,4,0,0" />
     </StackPanel>

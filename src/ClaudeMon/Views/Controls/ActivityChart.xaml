@@ -6,15 +6,6 @@
              mc:Ignorable="d"
              d:DesignWidth="320" d:DesignHeight="180">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/Colors.xaml" />
-                <ResourceDictionary Source="/Themes/Controls.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <Border Style="{StaticResource CardBorder}">
         <StackPanel>
             <!-- Section header -->
@@ -24,7 +15,7 @@
             <!-- Chart area -->
             <Grid Height="120">
                 <!-- Subtle horizontal grid line at 50% height -->
-                <Border BorderBrush="#2A3444"
+                <Border BorderBrush="{DynamicResource ChartGridLineBrush}"
                         BorderThickness="0,1,0,0"
                         VerticalAlignment="Center"
                         Margin="0,0,0,18"
@@ -40,7 +31,7 @@
             <TextBlock x:Name="EmptyState"
                        Text="No activity data available"
                        FontSize="11"
-                       Foreground="{StaticResource TextMutedBrush}"
+                       Foreground="{DynamicResource TextMutedBrush}"
                        HorizontalAlignment="Center"
                        Margin="0,8"
                        Visibility="Collapsed" />

@@ -5,16 +5,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/Colors.xaml" />
-                <ResourceDictionary Source="/Themes/DarkTheme.xaml" />
-                <ResourceDictionary Source="/Themes/Controls.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <Border Style="{StaticResource CardBorder}" MinWidth="170">
         <StackPanel>
             <TextBlock Text="{Binding Label, RelativeSource={RelativeSource AncestorType=UserControl}}"
