@@ -44,6 +44,8 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         [("default_claude_ai", "pro")] = "Pro",
         [("default_claude_ai", "")] = "Pro",
         [("default_claude_ai", "team")] = "Team Pro",
+        [("default_raven", "team")] = "Team Standard",
+        [("default_raven", "")] = "Standard",
     };
 
     public ProfileViewModel(
@@ -200,7 +202,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
             parts.Add(char.ToUpper(s[0]) + s[1..]);
         if (!string.IsNullOrEmpty(t))
         {
-            var display = t.Replace("default_claude_", "").Replace("_", " ").Trim();
+            var display = t.Replace("default_claude_", "").Replace("default_", "").Replace("_", " ").Trim();
             if (display.Length > 0)
                 parts.Add(char.ToUpper(display[0]) + display[1..]);
         }
