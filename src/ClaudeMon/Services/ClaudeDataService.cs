@@ -58,6 +58,11 @@ public sealed class ClaudeDataService
 
         foreach (var file in Directory.EnumerateFiles(projectsDir, "*.jsonl", SearchOption.AllDirectories))
         {
+            // Skip subagent conversation files - they contain agent task prompts
+            // and tool results, not human-authored messages.
+            if (file.Contains(Path.DirectorySeparatorChar + "subagents" + Path.DirectorySeparatorChar))
+                continue;
+
             if (File.GetLastWriteTimeUtc(file).Date < cutoffUtc)
                 continue;
 
@@ -117,18 +122,26 @@ public sealed class ClaudeDataService
             el.TryGetProperty(prop, out var v) && v.TryGetInt64(out var n) ? n : 0;
 
         // Returns true only for entries that contain human-authored text.
-        // Filters out tool-result entries, which also appear as type="user" in the
-        // Claude API format but represent tool outputs returned to the model, not
-        // messages typed by the user.
+        // Three kinds of type="user" entries must be excluded:
+        //   1. Tool results  — array content with tool_result type blocks
+        //   2. System injections — string content starting with '<', used by Claude Code
+        //      to inject slash command output, caveats, stderr, etc. into the conversation
+        //   3. Subagent prompts — excluded at the file level (subagents/ directories)
         static bool IsHumanMessage(JsonElement root)
         {
             if (!root.TryGetProperty("message", out var msg)) return false;
             if (!msg.TryGetProperty("content", out var content)) return false;
 
-            // String content is always a real user message.
-            if (content.ValueKind == JsonValueKind.String) return true;
+            if (content.ValueKind == JsonValueKind.String)
+            {
+                // System-injected messages always start with an XML-like tag (e.g.
+                // <local-command-caveat>, <command-name>, <local-command-stdout>).
+                // Real human messages never start with '<'.
+                var s = content.GetString();
+                return s != null && !s.StartsWith('<');
+            }
 
-            // Array content: human message if at least one element has type "text".
+            // Array content: human message only if it has a text block (not just tool results).
             if (content.ValueKind == JsonValueKind.Array)
             {
                 foreach (var item in content.EnumerateArray())
