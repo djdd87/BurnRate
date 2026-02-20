@@ -44,6 +44,7 @@ public partial class MainWindow : Window
 
         BtnDark.Style   = mode == AppThemeMode.Dark   ? activeStyle : normalStyle;
         BtnLight.Style  = mode == AppThemeMode.Light  ? activeStyle : normalStyle;
+        BtnDoom.Style   = mode == AppThemeMode.Doom   ? activeStyle : normalStyle;
         BtnSystem.Style = mode == AppThemeMode.System ? activeStyle : normalStyle;
     }
 
@@ -55,6 +56,11 @@ public partial class MainWindow : Window
     private void ThemeLight_Click(object sender, RoutedEventArgs e)
     {
         if (DataContext is MainViewModel vm) vm.ThemeMode = AppThemeMode.Light;
+    }
+
+    private void ThemeDoom_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm) vm.ThemeMode = AppThemeMode.Doom;
     }
 
     private void ThemeSystem_Click(object sender, RoutedEventArgs e)

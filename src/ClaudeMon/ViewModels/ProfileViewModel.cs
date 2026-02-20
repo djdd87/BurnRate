@@ -13,6 +13,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
     private readonly TrayIconService _iconService;
     private readonly FileWatcherService _watcherService;
     private readonly LiveUsageService _liveUsageService;
+    private readonly ThemeService _themeService;
     private TaskbarIcon? _trayIcon;
     private bool _disposed;
 
@@ -51,12 +52,14 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
     public ProfileViewModel(
         ProfileConfig config,
         UsageCalculator calculator,
+        ThemeService themeService,
         int refreshIntervalSeconds = 60)
     {
         _profileName = config.Name;
         _profilePath = config.Path;
         _dataService = new ClaudeDataService(config.Path);
         _calculator = calculator;
+        _themeService = themeService;
         _iconService = new TrayIconService();
         _watcherService = new FileWatcherService(config.Path, refreshIntervalSeconds * 1000);
         _liveUsageService = new LiveUsageService(config.Path);
@@ -67,7 +70,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         _trayIcon = new TaskbarIcon
         {
             ToolTipText = $"{ProfileName} - Loading...",
-            Icon = _iconService.CreateNotifyIcon(-1)
+            Icon = _iconService.CreateNotifyIcon(-1, _themeService.EffectiveTheme)
         };
         _trayIcon.TrayLeftMouseUp += (_, _) => TrayLeftClicked?.Invoke(this);
 
@@ -91,6 +94,8 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
 
         _watcherService.DataChanged += OnDataChanged;
         _watcherService.Start();
+
+        _themeService.ThemeChanged += OnThemeChanged;
 
         _ = RefreshAsync();
     }
@@ -203,7 +208,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
                 var iconPct = Usage.IsLive
                     ? Usage.SessionPercentage
                     : Usage.EstimatedPercentage;
-                _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct);
+                _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct, _themeService.EffectiveTheme);
             }
         }
         catch (Exception ex)
@@ -214,6 +219,11 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
     }
 
     private void OnDataChanged()
+    {
+        Application.Current?.Dispatcher.InvokeAsync(async () => await RefreshAsync());
+    }
+
+    private void OnThemeChanged(AppThemeMode _)
     {
         Application.Current?.Dispatcher.InvokeAsync(async () => await RefreshAsync());
     }
@@ -246,6 +256,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         if (_disposed) return;
         _disposed = true;
 
+        _themeService.ThemeChanged -= OnThemeChanged;
         _watcherService.DataChanged -= OnDataChanged;
         _watcherService.Dispose();
         _iconService.Dispose();

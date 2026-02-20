@@ -4,7 +4,7 @@ using Microsoft.Win32;
 
 namespace ClaudeMon.Services;
 
-public enum AppThemeMode { Dark, Light, System }
+public enum AppThemeMode { Dark, Light, Doom, System }
 
 public sealed class ThemeService : IDisposable
 {
@@ -33,12 +33,18 @@ public sealed class ThemeService : IDisposable
 
     private void ApplyTheme()
     {
-        var resolved = _currentMode == AppThemeMode.System ? ResolveSystemTheme() : _currentMode;
+        AppThemeMode resolved = _currentMode == AppThemeMode.System
+            ? ResolveSystemTheme()
+            : _currentMode;
+
         _effectiveTheme = resolved;
 
-        var uri = resolved == AppThemeMode.Light
-            ? new Uri("pack://application:,,,/Themes/Colors_Light.xaml")
-            : new Uri("pack://application:,,,/Themes/Colors_Dark.xaml");
+        var uri = resolved switch
+        {
+            AppThemeMode.Light => new Uri("pack://application:,,,/Themes/Colors_Light.xaml"),
+            AppThemeMode.Doom  => new Uri("pack://application:,,,/Themes/Colors_Doom.xaml"),
+            _                  => new Uri("pack://application:,,,/Themes/Colors_Dark.xaml"),
+        };
 
         var dict = new System.Windows.ResourceDictionary { Source = uri };
         System.Windows.Application.Current.Resources.MergedDictionaries[0] = dict;

@@ -63,6 +63,7 @@
                                 Margin="0,0,4,0">
                         <Button x:Name="BtnDark"   Content="Dark"   Style="{StaticResource ThemeToggleButton}" Click="ThemeDark_Click"   Margin="0,0,2,0" />
                         <Button x:Name="BtnLight"  Content="Light"  Style="{StaticResource ThemeToggleButton}" Click="ThemeLight_Click"  Margin="0,0,2,0" />
+                        <Button x:Name="BtnDoom"   Content="Doom"   Style="{StaticResource ThemeToggleButton}" Click="ThemeDoom_Click"   Margin="0,0,2,0" />
                         <Button x:Name="BtnSystem" Content="System" Style="{StaticResource ThemeToggleButton}" Click="ThemeSystem_Click" />
                     </StackPanel>
                     <TextBlock Text="ClaudMon"

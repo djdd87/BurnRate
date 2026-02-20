@@ -76,7 +76,7 @@ public partial class App : Application
 
         foreach (var profileConfig in profiles)
         {
-            var profileVm = new ProfileViewModel(profileConfig, calculator, refreshInterval);
+            var profileVm = new ProfileViewModel(profileConfig, calculator, _themeService!, refreshInterval);
             _mainViewModel.AddProfile(profileVm);
         }
 
