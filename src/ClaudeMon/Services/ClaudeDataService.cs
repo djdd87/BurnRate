@@ -47,9 +47,9 @@ public sealed class ClaudeDataService
     /// live figures for any days that are stale or missing from the cache.
     /// Only files modified within the window are read to keep the scan fast.
     /// </summary>
-    public async Task<Dictionary<DateTime, (int Messages, long OutputTokens)>> GetRecentJsonlStatsAsync(int days = 7)
+    public async Task<Dictionary<DateTime, (int Messages, long OutputTokens, int Sessions)>> GetRecentJsonlStatsAsync(int days = 7)
     {
-        var result = new Dictionary<DateTime, (int Messages, long OutputTokens)>();
+        var result = new Dictionary<DateTime, (int Messages, long OutputTokens, int Sessions)>();
         var projectsDir = Path.Combine(_claudePath, "projects");
         if (!Directory.Exists(projectsDir))
             return result;
@@ -65,6 +65,10 @@ public sealed class ClaudeDataService
 
             if (File.GetLastWriteTimeUtc(file).Date < cutoffUtc)
                 continue;
+
+            // Track which dates this file contributed a human message on so we can
+            // increment the session count once per file per day.
+            var datesWithActivity = new HashSet<DateTime>();
 
             try
             {
@@ -97,14 +101,17 @@ public sealed class ClaudeDataService
                             // Tool results are also sent as role=user in the API, so every tool
                             // call generates a "type":"user" JSONL entry - we must skip those.
                             if (IsHumanMessage(root))
-                                result[date] = (existing.Messages + 1, existing.OutputTokens);
+                            {
+                                result[date] = (existing.Messages + 1, existing.OutputTokens, existing.Sessions);
+                                datesWithActivity.Add(date);
+                            }
                             break;
 
                         case "assistant":
                             if (root.TryGetProperty("message", out var msgEl) &&
                                 msgEl.TryGetProperty("usage", out var usageEl))
                             {
-                                result[date] = (existing.Messages, existing.OutputTokens + GetLong(usageEl, "output_tokens"));
+                                result[date] = (existing.Messages, existing.OutputTokens + GetLong(usageEl, "output_tokens"), existing.Sessions);
                             }
                             break;
                     }
@@ -113,6 +120,13 @@ public sealed class ClaudeDataService
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[GetRecentJsonlStats] {file}: {ex.Message}");
+            }
+
+            // Count this file as one session for each day it had human messages.
+            foreach (var date in datesWithActivity)
+            {
+                result.TryGetValue(date, out var existing);
+                result[date] = (existing.Messages, existing.OutputTokens, existing.Sessions + 1);
             }
         }
 

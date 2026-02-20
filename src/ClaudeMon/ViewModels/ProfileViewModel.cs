@@ -107,6 +107,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
             {
                 summary.TodayMessages = todayJsonl.Messages;
                 summary.TodayTokens = todayJsonl.OutputTokens;
+                summary.TodaySessions = todayJsonl.Sessions;
             }
 
             summary.DailyActivity = summary.DailyActivity.Select(day =>
