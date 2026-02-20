@@ -13,6 +13,7 @@ public sealed class MainViewModelTests : IDisposable
 {
     private readonly string _tempDir;
     private readonly Dictionary<string, long> _planLimits;
+    private readonly ThemeService _themeService;
 
     public MainViewModelTests()
     {
@@ -23,10 +24,12 @@ public sealed class MainViewModelTests : IDisposable
             ["default_claude_max_5x"] = 2_500_000,
             ["pro"] = 2_500_000
         };
+        _themeService = new ThemeService();
     }
 
     public void Dispose()
     {
+        _themeService.Dispose();
         if (Directory.Exists(_tempDir))
         {
             try
@@ -46,7 +49,7 @@ public sealed class MainViewModelTests : IDisposable
     {
         var config = new ProfileConfig { Name = name, Path = _tempDir };
         var calculator = new UsageCalculator(_planLimits);
-        return new ProfileViewModel(config, calculator, refreshIntervalSeconds: 60);
+        return new ProfileViewModel(config, calculator, _themeService, refreshIntervalSeconds: 60);
     }
 
     #endregion
@@ -57,7 +60,7 @@ public sealed class MainViewModelTests : IDisposable
     public void AddProfile_FirstProfile_BecomesSelected()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
 
         // Act
@@ -72,7 +75,7 @@ public sealed class MainViewModelTests : IDisposable
     public void AddProfile_SecondProfile_DoesNotChangeSelected()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -93,7 +96,7 @@ public sealed class MainViewModelTests : IDisposable
     public void AddProfile_AddsToCollection()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -113,7 +116,7 @@ public sealed class MainViewModelTests : IDisposable
     public void AddProfile_IncreasesCollectionCount()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -143,7 +146,7 @@ public sealed class MainViewModelTests : IDisposable
     public void SelectedProfile_Change_FiresUsagePropertyChanged()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -173,7 +176,7 @@ public sealed class MainViewModelTests : IDisposable
     public void SelectedProfile_ManualChange_Updates()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -197,7 +200,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Usage_ReturnsSelectedProfileUsage()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile = CreateTestProfile("Profile1");
         mainVm.AddProfile(profile);
 
@@ -214,7 +217,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Usage_NullWhenNoSelection()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
 
         // Act
         var usage = mainVm.Usage;
@@ -227,7 +230,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Usage_ReflectsCurrentSelection()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -252,7 +255,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Usage_UnsubscribesFromOldProfile()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -292,7 +295,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Dispose_DisposesAllProfiles()
     {
         // Arrange
-        var mainVm = new MainViewModel();
+        var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -311,7 +314,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Dispose_MultipleTimes_DoesNotThrow()
     {
         // Arrange
-        var mainVm = new MainViewModel();
+        var mainVm = new MainViewModel(_themeService);
         var profile = CreateTestProfile("Profile1");
         mainVm.AddProfile(profile);
 
@@ -327,7 +330,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Dispose_CleanupSuccessful()
     {
         // Arrange
-        var mainVm = new MainViewModel();
+        var mainVm = new MainViewModel(_themeService);
         var profile = CreateTestProfile("Profile1");
         mainVm.AddProfile(profile);
 
@@ -349,7 +352,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Profiles_InitiallyEmpty()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
 
         // Act
         var count = mainVm.Profiles.Count;
@@ -362,7 +365,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Profiles_IsObservableCollection()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
 
         // Act
         var profiles = mainVm.Profiles;
@@ -375,7 +378,7 @@ public sealed class MainViewModelTests : IDisposable
     public void Profiles_PropertyChangedFiresWhenAdded()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile = CreateTestProfile("Profile1");
 
         var propertyChangedEvents = new List<string>();
@@ -401,7 +404,7 @@ public sealed class MainViewModelTests : IDisposable
     public void MultiProfile_SwitchBetweenProfiles()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
         var profile3 = CreateTestProfile("Profile3");
@@ -435,7 +438,7 @@ public sealed class MainViewModelTests : IDisposable
     public void MultiProfile_EachProfileIndependent()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile1 = CreateTestProfile("Profile1");
         var profile2 = CreateTestProfile("Profile2");
 
@@ -463,7 +466,7 @@ public sealed class MainViewModelTests : IDisposable
     public async Task Integration_AddProfile_RefreshAsync_SelectProfile()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var profile = CreateTestProfile("IntegrationTest");
 
         // Minimal setup - just stats-cache with no data
@@ -510,7 +513,7 @@ public sealed class MainViewModelTests : IDisposable
     public void IsWindowVisible_InitiallyFalse()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
 
         // Act
         var isVisible = mainVm.IsWindowVisible;
@@ -523,7 +526,7 @@ public sealed class MainViewModelTests : IDisposable
     public void IsWindowVisible_CanBeSet()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
 
         // Act
         mainVm.IsWindowVisible = true;
@@ -542,7 +545,7 @@ public sealed class MainViewModelTests : IDisposable
     public void IsWindowVisible_FiresPropertyChanged()
     {
         // Arrange
-        using var mainVm = new MainViewModel();
+        using var mainVm = new MainViewModel(_themeService);
         var propertyChangedEvents = new List<string>();
 
         mainVm.PropertyChanged += (sender, e) =>

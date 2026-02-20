@@ -13,6 +13,7 @@ public sealed class ProfileViewModelRefreshTests : IDisposable
 {
     private readonly string _tempDir;
     private readonly Dictionary<string, long> _planLimits;
+    private readonly ThemeService _themeService;
 
     public ProfileViewModelRefreshTests()
     {
@@ -25,10 +26,12 @@ public sealed class ProfileViewModelRefreshTests : IDisposable
             ["pro"] = 2_500_000,
             ["default_raven"] = 1_000_000
         };
+        _themeService = new ThemeService();
     }
 
     public void Dispose()
     {
+        _themeService.Dispose();
         if (Directory.Exists(_tempDir))
         {
             try
@@ -48,7 +51,7 @@ public sealed class ProfileViewModelRefreshTests : IDisposable
     {
         var config = new ProfileConfig { Name = profileName, Path = _tempDir };
         var calculator = new UsageCalculator(_planLimits);
-        return new ProfileViewModel(config, calculator, refreshIntervalSeconds: 60);
+        return new ProfileViewModel(config, calculator, _themeService, refreshIntervalSeconds: 60);
     }
 
     private void WriteStatsCache(StatsCache stats)

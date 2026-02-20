@@ -243,7 +243,7 @@ public sealed class ClaudeDataServiceTests : IDisposable
     public async Task GetRecentJsonlStatsAsync_MultipleModels_TracksTokensPerModel()
     {
         // Arrange
-        var today = DateTime.UtcNow;
+        var today = DateTime.UtcNow.Date; // Use start-of-day so +1h/+2h stay on the same UTC date
         var projectDir = Path.Combine(_tempDir, "projects", "test-project");
         Directory.CreateDirectory(projectDir);
 
@@ -298,7 +298,7 @@ public sealed class ClaudeDataServiceTests : IDisposable
     public async Task GetRecentJsonlStatsAsync_SessionCount_OnePerFilePerDay()
     {
         // Arrange
-        var today = DateTime.UtcNow;
+        var today = DateTime.UtcNow.Date; // Use start-of-day so +2h stays on the same UTC date
         var projectDir = Path.Combine(_tempDir, "projects", "test-project");
         Directory.CreateDirectory(projectDir);
 
@@ -422,7 +422,7 @@ public sealed class ClaudeDataServiceTests : IDisposable
     public async Task GetRecentJsonlStatsAsync_MultipleDaysInOneFile_CorrectPerDayBreakdown()
     {
         // Arrange
-        var today = DateTime.UtcNow;
+        var today = DateTime.UtcNow.Date; // Use start-of-day so +6h stays within the same UTC day
         var yesterday = today.AddDays(-1);
         var projectDir = Path.Combine(_tempDir, "projects", "test-project");
         Directory.CreateDirectory(projectDir);
