@@ -215,8 +215,8 @@
                                                    Converter={StaticResource TokenFormatter},
                                                    Mode=OneWay}" />
 
-                        <controls:StatCard Label="SESSIONS"
-                                           Value="{Binding SelectedProfile.Usage.TotalSessions, Mode=OneWay}" />
+                        <controls:StatCard Label="TODAY SESSIONS"
+                                           Value="{Binding SelectedProfile.Usage.TodaySessions, Mode=OneWay}" />
 
                         <controls:StatCard Label="TOTAL MSGS"
                                            Value="{Binding SelectedProfile.Usage.TotalMessages, Mode=OneWay}" />
