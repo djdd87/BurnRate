@@ -47,7 +47,8 @@
             </Grid.RowDefinitions>
 
             <!-- ========== Title Bar ========== -->
-            <Border Grid.Row="0"
+            <Border x:Name="TitleBarBorder"
+                    Grid.Row="0"
                     Background="{DynamicResource BgSecondaryBrush}"
                     CornerRadius="8,8,0,0"
                     Padding="16,10"
@@ -65,7 +66,8 @@
             </Border>
 
             <!-- ========== Profile Selector (only shown when multiple profiles) ========== -->
-            <ItemsControl Grid.Row="1"
+            <ItemsControl x:Name="ProfileSelectorControl"
+                          Grid.Row="1"
                           ItemsSource="{Binding Profiles}"
                           Visibility="{Binding Profiles.Count, Converter={StaticResource CountToVisibility}}">
                 <ItemsControl.ItemsPanel>
@@ -107,7 +109,11 @@
             </ItemsControl>
 
             <!-- ========== Content (binds to SelectedProfile.Usage) ========== -->
-            <StackPanel Grid.Row="2" Margin="16,12,16,8">
+            <ScrollViewer x:Name="ContentScroller"
+                          Grid.Row="2"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="16,12,16,8">
 
                     <!-- ===== 1. Usage Gauge ===== -->
                     <StackPanel HorizontalAlignment="Center"
@@ -215,9 +221,11 @@
                                             Margin="0,0,0,8" />
 
             </StackPanel>
+            </ScrollViewer>
 
             <!-- ========== Footer ========== -->
-            <Border Grid.Row="3"
+            <Border x:Name="FooterBorder"
+                    Grid.Row="3"
                     Background="{DynamicResource BgSecondaryBrush}"
                     CornerRadius="0,0,8,8"
                     Padding="16,8">

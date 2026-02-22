@@ -10,6 +10,18 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         MaxHeight = SystemParameters.WorkArea.Height;
+        Loaded += (_, _) => UpdateScrollerMaxHeight();
+    }
+
+    private void UpdateScrollerMaxHeight()
+    {
+        // Constrain the scrollable content to the work area, leaving room for the
+        // title bar, profile selector, footer, and the outer border's 10px margins.
+        ContentScroller.MaxHeight = MaxHeight
+            - TitleBarBorder.ActualHeight
+            - ProfileSelectorControl.ActualHeight
+            - FooterBorder.ActualHeight
+            - 20; // Border Margin="10" — 10px top + 10px bottom
     }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
