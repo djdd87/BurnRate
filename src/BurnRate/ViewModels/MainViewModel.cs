@@ -97,7 +97,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         // Initialize in reverse so the first profile's tray icon is created last
         // and appears closest to the clock (most visible position).
         foreach (var profile in Profiles.Reverse())
-            profile.Initialize();
+            profile.Initialize(this);
     }
 
     partial void OnSelectedProfileChanged(ProfileViewModel? oldValue, ProfileViewModel? newValue)

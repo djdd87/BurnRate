@@ -57,16 +57,7 @@
                             Style="{StaticResource CloseButton}"
                             Click="CloseButton_Click"
                             VerticalAlignment="Center" />
-                    <StackPanel x:Name="ThemeButtonPanel"
-                                DockPanel.Dock="Right"
-                                Orientation="Horizontal"
-                                VerticalAlignment="Center"
-                                Margin="0,0,4,0">
-                        <Button x:Name="BtnDark"   Content="Dark"   Style="{StaticResource ThemeToggleButton}" Click="ThemeDark_Click"   Margin="0,0,2,0" />
-                        <Button x:Name="BtnLight"  Content="Light"  Style="{StaticResource ThemeToggleButton}" Click="ThemeLight_Click"  Margin="0,0,2,0" />
-                        <Button x:Name="BtnSystem" Content="System" Style="{StaticResource ThemeToggleButton}" Click="ThemeSystem_Click" />
-                    </StackPanel>
-                    <TextBlock Text="ClaudMon"
+                    <TextBlock Text="BurnRate"
                                Style="{StaticResource HeaderText}"
                                FontSize="15"
                                VerticalAlignment="Center" />

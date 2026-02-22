@@ -56,41 +56,4 @@
         </Setter>
     </Style>
 
-    <!-- Theme toggle button: compact, transparent background, muted foreground -->
-    <Style x:Key="ThemeToggleButton" TargetType="Button">
-        <Setter Property="Height" Value="22" />
-        <Setter Property="Padding" Value="6,0" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="FontSize" Value="11" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="PART_Border"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="3"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"
-                                          TextBlock.Foreground="{TemplateBinding Foreground}" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_Border" Property="Background" Value="{DynamicResource BgCardBrush}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <!-- Active theme toggle: accent foreground + card background -->
-    <Style x:Key="ThemeToggleButtonActive" TargetType="Button" BasedOn="{StaticResource ThemeToggleButton}">
-        <Setter Property="Foreground" Value="{DynamicResource AccentPrimaryBrush}" />
-        <Setter Property="Background" Value="{DynamicResource BgCardBrush}" />
-    </Style>
-
 </ResourceDictionary>

@@ -17,6 +17,8 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
     private readonly ThemeService _themeService;
     private TaskbarIcon? _trayIcon;
     private bool _disposed;
+    private MainViewModel? _mainVm;
+    private System.ComponentModel.PropertyChangedEventHandler? _mainVmPropertyChanged;
 
     [ObservableProperty]
     private string _profileName;
@@ -72,8 +74,10 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         _liveUsageService = new LiveUsageService(config.Path);
     }
 
-    public void Initialize()
+    public void Initialize(MainViewModel mainVm)
     {
+        _mainVm = mainVm;
+
         _trayIcon = new TaskbarIcon
         {
             ToolTipText = $"{ProfileName} - Loading...",
@@ -91,6 +95,51 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         refreshItem.Click += async (_, _) => await RefreshAsync();
         menu.Items.Add(refreshItem);
 
+        // --- Theme submenu ---
+        var themeMenu = new System.Windows.Controls.MenuItem { Header = "Theme" };
+
+        var darkItem   = new System.Windows.Controls.MenuItem { Header = "Dark",   IsCheckable = true };
+        var lightItem  = new System.Windows.Controls.MenuItem { Header = "Light",  IsCheckable = true };
+        var systemItem = new System.Windows.Controls.MenuItem { Header = "System", IsCheckable = true };
+
+        darkItem.Click   += (_, _) => mainVm.ThemeMode = AppThemeMode.Dark;
+        lightItem.Click  += (_, _) => mainVm.ThemeMode = AppThemeMode.Light;
+        systemItem.Click += (_, _) => mainVm.ThemeMode = AppThemeMode.System;
+
+        themeMenu.Items.Add(darkItem);
+        themeMenu.Items.Add(lightItem);
+        themeMenu.Items.Add(systemItem);
+
+        var customItems = new List<(System.Windows.Controls.MenuItem Item, CustomTheme Theme)>();
+        foreach (var ct in mainVm.AvailableCustomThemes)
+        {
+            var capturedCt = ct;
+            var ctItem = new System.Windows.Controls.MenuItem { Header = ct.DisplayName, IsCheckable = true };
+            ctItem.Click += (_, _) => mainVm.SelectCustomThemeCommand.Execute(capturedCt);
+            themeMenu.Items.Add(ctItem);
+            customItems.Add((ctItem, capturedCt));
+        }
+
+        void UpdateThemeChecks()
+        {
+            darkItem.IsChecked   = mainVm.ThemeMode == AppThemeMode.Dark;
+            lightItem.IsChecked  = mainVm.ThemeMode == AppThemeMode.Light;
+            systemItem.IsChecked = mainVm.ThemeMode == AppThemeMode.System;
+            foreach (var (item, ct) in customItems)
+                item.IsChecked = mainVm.ThemeMode == AppThemeMode.Custom
+                    && mainVm.ActiveCustomTheme?.Id == ct.Id;
+        }
+
+        UpdateThemeChecks();
+
+        _mainVmPropertyChanged = (_, args) =>
+        {
+            if (args.PropertyName is nameof(MainViewModel.ThemeMode) or nameof(MainViewModel.ActiveCustomTheme))
+                Application.Current?.Dispatcher.Invoke(UpdateThemeChecks);
+        };
+        mainVm.PropertyChanged += _mainVmPropertyChanged;
+
+        menu.Items.Add(themeMenu);
         menu.Items.Add(new System.Windows.Controls.Separator());
 
         var exitItem = new System.Windows.Controls.MenuItem { Header = "Exit" };
@@ -371,6 +420,9 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+
+        if (_mainVm != null && _mainVmPropertyChanged != null)
+            _mainVm.PropertyChanged -= _mainVmPropertyChanged;
 
         _themeService.ThemeChanged -= OnThemeChanged;
         _watcherService.DataChanged -= OnDataChanged;
