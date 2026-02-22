@@ -57,13 +57,13 @@
                             Style="{StaticResource CloseButton}"
                             Click="CloseButton_Click"
                             VerticalAlignment="Center" />
-                    <StackPanel DockPanel.Dock="Right"
+                    <StackPanel x:Name="ThemeButtonPanel"
+                                DockPanel.Dock="Right"
                                 Orientation="Horizontal"
                                 VerticalAlignment="Center"
                                 Margin="0,0,4,0">
                         <Button x:Name="BtnDark"   Content="Dark"   Style="{StaticResource ThemeToggleButton}" Click="ThemeDark_Click"   Margin="0,0,2,0" />
                         <Button x:Name="BtnLight"  Content="Light"  Style="{StaticResource ThemeToggleButton}" Click="ThemeLight_Click"  Margin="0,0,2,0" />
-                        <Button x:Name="BtnDoom"   Content="Doom"   Style="{StaticResource ThemeToggleButton}" Click="ThemeDoom_Click"   Margin="0,0,2,0" />
                         <Button x:Name="BtnSystem" Content="System" Style="{StaticResource ThemeToggleButton}" Click="ThemeSystem_Click" />
                     </StackPanel>
                     <TextBlock Text="ClaudMon"
@@ -123,6 +123,7 @@
                                 Margin="0,4,0,12">
                         <controls:UsageGaugeControl Width="160" Height="160"
                                                      Percentage="{Binding SelectedProfile.Usage.EstimatedPercentage, Mode=OneWay}"
+                                                     GaugeImageSource="{Binding SelectedProfile.GaugeImageSource, Mode=OneWay}"
                                                      HorizontalAlignment="Center" />
 
                         <!-- ── LIVE mode display ── -->
@@ -138,10 +139,15 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <!-- Weekly percentage -->
-                            <TextBlock HorizontalAlignment="Center" FontSize="14" Margin="0,8,0,0">
-                                <Run Text="Weekly: " Foreground="{DynamicResource TextSecondaryBrush}" /><Run Text="{Binding SelectedProfile.Usage.WeeklyPercentage, Converter={StaticResource PercentToText}, Mode=OneWay}" Foreground="{Binding SelectedProfile.Usage.WeeklyPercentage, Converter={StaticResource PercentToColor}}" />
-                            </TextBlock>
+                            <!-- Session + Weekly percentages side by side -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
+                                <TextBlock FontSize="14">
+                                    <Run Text="Session: " Foreground="{DynamicResource TextSecondaryBrush}" /><Run Text="{Binding SelectedProfile.Usage.SessionPercentage, Converter={StaticResource PercentToText}, Mode=OneWay}" Foreground="{Binding SelectedProfile.Usage.SessionPercentage, Converter={StaticResource PercentToColor}}" />
+                                </TextBlock>
+                                <TextBlock FontSize="14" Margin="16,0,0,0">
+                                    <Run Text="Weekly: " Foreground="{DynamicResource TextSecondaryBrush}" /><Run Text="{Binding SelectedProfile.Usage.WeeklyPercentage, Converter={StaticResource PercentToText}, Mode=OneWay}" Foreground="{Binding SelectedProfile.Usage.WeeklyPercentage, Converter={StaticResource PercentToColor}}" />
+                                </TextBlock>
+                            </StackPanel>
 
                             <!-- Reset times -->
                             <TextBlock HorizontalAlignment="Center" FontSize="10"
@@ -183,7 +189,7 @@
                                                         Converter={StaticResource PercentToColor}}" />
                                     </Style>
                                 </TextBlock.Style>
-                                <Run Text="{Binding SelectedProfile.Usage.EstimatedPercentage, Converter={StaticResource PercentToText}, ConverterParameter='~', Mode=OneWay}" /><Run Text=" Est." />
+                                <Run Text="{Binding SelectedProfile.Usage.EstimatedPercentage, Converter={StaticResource PercentToText}, Mode=OneWay}" /><Run Text=" Est." />
                             </TextBlock>
 
                             <TextBlock HorizontalAlignment="Center"

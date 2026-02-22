@@ -30,28 +30,59 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private AppThemeMode _effectiveTheme;
 
+    [ObservableProperty]
+    private ObservableCollection<CustomTheme> _availableCustomThemes = [];
+
+    [ObservableProperty]
+    private CustomTheme? _activeCustomTheme;
+
     /// <summary>
     /// Convenience binding: the Usage of the currently selected profile.
     /// </summary>
     public UsageSummary? Usage => SelectedProfile?.Usage;
 
-    public MainViewModel(ThemeService themeService)
+    public MainViewModel(ThemeService themeService, IReadOnlyList<CustomTheme>? customThemes = null)
     {
         _themeService = themeService;
         _themeMode = themeService.CurrentMode;
         _effectiveTheme = themeService.EffectiveTheme;
+        _activeCustomTheme = themeService.ActiveCustomTheme;
         _themeService.ThemeChanged += OnThemeServiceChanged;
+
+        if (customThemes != null)
+            foreach (var theme in customThemes)
+                _availableCustomThemes.Add(theme);
     }
 
     partial void OnThemeModeChanged(AppThemeMode value)
     {
-        _themeService.SetTheme(value);
+        if (value != AppThemeMode.Custom)
+        {
+            _themeService.SetTheme(value);
+            ActiveCustomTheme = null;
+        }
         EffectiveTheme = _themeService.EffectiveTheme;
     }
 
     private void OnThemeServiceChanged(AppThemeMode effectiveTheme)
     {
         EffectiveTheme = effectiveTheme;
+    }
+
+    [RelayCommand]
+    private void SelectCustomTheme(CustomTheme theme)
+    {
+        _themeService.SetCustomTheme(theme);
+        // Set backing fields directly to skip generated callbacks that would fight each other.
+        // MVVMTK0034 is suppressed intentionally here.
+#pragma warning disable MVVMTK0034
+        _activeCustomTheme = theme;
+        OnPropertyChanged(nameof(ActiveCustomTheme));
+        _themeMode = AppThemeMode.Custom;
+        OnPropertyChanged(nameof(ThemeMode));
+#pragma warning restore MVVMTK0034
+        foreach (var p in Profiles)
+            p.RefreshTrayIcon();
     }
 
     public void AddProfile(ProfileViewModel profile)

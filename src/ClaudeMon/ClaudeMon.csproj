@@ -21,7 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\DoomFaces\*.png" />
+    <Content Include="..\..\CustomThemes\**\*.*">
+      <Link>CustomThemes\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

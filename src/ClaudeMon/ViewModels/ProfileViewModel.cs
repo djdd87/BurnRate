@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Hardcodet.Wpf.TaskbarNotification;
 using ClaudeMon.Models;
@@ -32,7 +33,13 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private string _planDisplayName = "Unknown Plan";
 
+    [ObservableProperty]
+    private System.Windows.Media.ImageSource? _gaugeImageSource;
+
     public event Action<ProfileViewModel>? TrayLeftClicked;
+
+    // Cache for WPF BitmapImages keyed by absolute file path (UI thread only).
+    private static readonly Dictionary<string, BitmapImage> _gaugeImageCache = [];
 
     private static readonly Dictionary<(string Tier, string Sub), string> KnownPlans = new()
     {
@@ -70,7 +77,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         _trayIcon = new TaskbarIcon
         {
             ToolTipText = $"{ProfileName} - Loading...",
-            Icon = _iconService.CreateNotifyIcon(-1, _themeService.EffectiveTheme)
+            Icon = _iconService.CreateNotifyIcon(-1, _themeService.ActiveCustomTheme)
         };
         _trayIcon.TrayLeftMouseUp += (_, _) => TrayLeftClicked?.Invoke(this);
 
@@ -98,6 +105,20 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         _themeService.ThemeChanged += OnThemeChanged;
 
         _ = RefreshAsync();
+    }
+
+    /// <summary>
+    /// Re-renders the tray icon and gauge image without reloading data.
+    /// Called after a custom theme is selected.
+    /// </summary>
+    public void RefreshTrayIcon()
+    {
+        if (_trayIcon != null)
+        {
+            var iconPct = Usage.IsLive ? Usage.SessionPercentage : Usage.EstimatedPercentage;
+            _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct, _themeService.ActiveCustomTheme);
+        }
+        UpdateGaugeImage();
     }
 
     public async Task RefreshAsync()
@@ -208,14 +229,47 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
                 var iconPct = Usage.IsLive
                     ? Usage.SessionPercentage
                     : Usage.EstimatedPercentage;
-                _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct, _themeService.EffectiveTheme);
+                _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct, _themeService.ActiveCustomTheme);
             }
+
+            UpdateGaugeImage();
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[{ProfileName}] Refresh error: {ex.Message}");
             TooltipText = $"{ProfileName} - Error loading data";
         }
+    }
+
+    private void UpdateGaugeImage()
+    {
+        var customTheme = _themeService.ActiveCustomTheme;
+        if (customTheme?.FaceImages is not { Count: > 0 })
+        {
+            GaugeImageSource = null;
+            return;
+        }
+
+        var pct = Usage.IsLive ? Usage.SessionPercentage : Usage.EstimatedPercentage;
+        var path = customTheme.ResolveFacePath(pct < 0 ? 0 : pct);
+        if (path == null)
+        {
+            GaugeImageSource = null;
+            return;
+        }
+
+        if (!_gaugeImageCache.TryGetValue(path, out var bmp))
+        {
+            bmp = new BitmapImage();
+            bmp.BeginInit();
+            bmp.UriSource = new Uri(path, UriKind.Absolute);
+            bmp.CacheOption = BitmapCacheOption.OnLoad;
+            bmp.EndInit();
+            bmp.Freeze();
+            _gaugeImageCache[path] = bmp;
+        }
+
+        GaugeImageSource = bmp;
     }
 
     private void OnDataChanged()

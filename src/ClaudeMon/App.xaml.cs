@@ -26,8 +26,11 @@ public partial class App : Application
             return;
         }
 
+        // Load custom themes BEFORE ThemeService.Initialize so it can resolve persisted theme name
+        var customThemes = CustomThemeLoader.LoadAll();
+
         _themeService = new ThemeService();
-        _themeService.Initialize();
+        _themeService.Initialize(customThemes);
 
         var config = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
@@ -72,7 +75,7 @@ public partial class App : Application
         }
 
         var calculator = new UsageCalculator(planLimits);
-        _mainViewModel = new MainViewModel(_themeService);
+        _mainViewModel = new MainViewModel(_themeService, customThemes);
 
         foreach (var profileConfig in profiles)
         {

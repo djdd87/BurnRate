@@ -6,27 +6,28 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ClaudeMon.Models;
 
 namespace ClaudeMon.Services;
 
 /// <summary>
 /// Generates dynamic tray icons showing either a colored percentage badge (standard themes)
-/// or the Doom marine's face in a health state matching the current usage (Doom theme).
+/// or a custom face image from a CustomTheme's faceImages list.
 /// </summary>
 public class TrayIconService : IDisposable
 {
     private IntPtr _currentIconHandle;
     private bool _disposed;
 
-    // Cached face bitmaps — loaded once from embedded resources and reused.
+    // Cached face bitmaps — loaded once from filesystem and reused, keyed by absolute path.
     private static readonly Dictionary<string, System.Drawing.Bitmap> _faceCache = [];
 
     /// <summary>
     /// Creates a WPF <see cref="ImageSource"/> suitable for binding to an Image control.
     /// </summary>
-    public ImageSource CreateIcon(double percentage, AppThemeMode theme = AppThemeMode.Dark)
+    public ImageSource CreateIcon(double percentage, CustomTheme? customTheme = null)
     {
-        using var bitmap = RenderBitmap(percentage, theme);
+        using var bitmap = RenderBitmap(percentage, customTheme);
         var hBitmap = bitmap.GetHbitmap();
         try
         {
@@ -47,11 +48,11 @@ public class TrayIconService : IDisposable
     /// <c>Hardcodet.NotifyIcon.Wpf.TaskbarIcon.Icon</c>.
     /// Tracks the native handle for proper cleanup.
     /// </summary>
-    public Icon CreateNotifyIcon(double percentage, AppThemeMode theme = AppThemeMode.Dark)
+    public Icon CreateNotifyIcon(double percentage, CustomTheme? customTheme = null)
     {
         CleanupCurrentHandle();
 
-        using var bitmap = RenderBitmap(percentage, theme);
+        using var bitmap = RenderBitmap(percentage, customTheme);
         _currentIconHandle = bitmap.GetHicon();
         return Icon.FromHandle(_currentIconHandle);
     }
@@ -60,20 +61,24 @@ public class TrayIconService : IDisposable
     // Rendering
     // ────────────────────────────────────────────────────────
 
-    private static System.Drawing.Bitmap RenderBitmap(double percentage, AppThemeMode theme)
+    private static System.Drawing.Bitmap RenderBitmap(double percentage, CustomTheme? customTheme)
     {
         var size = GetSystemMetrics(SM_CXICON);
         if (size < 32) size = 32;
 
-        return theme == AppThemeMode.Doom
-            ? RenderDoomFace(percentage, size)
+        return customTheme?.FaceImages is { Count: > 0 }
+            ? RenderFaceImage(percentage, customTheme, size)
             : RenderBadge(percentage, size);
     }
 
-    /// <summary>Renders the classic Doom marine face scaled to the icon size.</summary>
-    private static System.Drawing.Bitmap RenderDoomFace(double percentage, int size)
+    /// <summary>Renders a custom theme face image scaled to the icon size.</summary>
+    private static System.Drawing.Bitmap RenderFaceImage(double percentage, CustomTheme customTheme, int size)
     {
-        var faceBmp = LoadFace(GetFaceName(percentage));
+        var facePath = customTheme.ResolveFacePath(percentage);
+        if (facePath == null)
+            return RenderBadge(percentage, size);
+
+        var faceBmp = LoadFaceFromFile(facePath);
         var bitmap = new System.Drawing.Bitmap(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
         using var g = System.Drawing.Graphics.FromImage(bitmap);
         g.InterpolationMode = InterpolationMode.NearestNeighbor;
@@ -83,28 +88,12 @@ public class TrayIconService : IDisposable
         return bitmap;
     }
 
-    /// <summary>Returns the face resource name for the given usage percentage.</summary>
-    private static string GetFaceName(double percentage)
+    /// <summary>Loads a face bitmap from the filesystem, caching after first load.</summary>
+    private static System.Drawing.Bitmap LoadFaceFromFile(string absolutePath)
     {
-        if (percentage >= 100) return "face_dead.png";
-        if (percentage >= 81)  return "face_4.png";
-        if (percentage >= 61)  return "face_3.png";
-        if (percentage >= 41)  return "face_2.png";
-        if (percentage >= 21)  return "face_1.png";
-        return "face_0.png";   // 0-20% or no data
-    }
-
-    /// <summary>Loads a face bitmap from embedded WPF resources, caching after first load.</summary>
-    private static System.Drawing.Bitmap LoadFace(string name)
-    {
-        if (_faceCache.TryGetValue(name, out var cached)) return cached;
-
-        var uri = new Uri($"pack://application:,,,/Assets/DoomFaces/{name}");
-        var streamInfo = Application.GetResourceStream(uri)
-            ?? throw new InvalidOperationException($"Doom face resource not found: {name}");
-
-        var bmp = new System.Drawing.Bitmap(streamInfo.Stream);
-        _faceCache[name] = bmp;
+        if (_faceCache.TryGetValue(absolutePath, out var cached)) return cached;
+        var bmp = new System.Drawing.Bitmap(absolutePath);
+        _faceCache[absolutePath] = bmp;
         return bmp;
     }
 

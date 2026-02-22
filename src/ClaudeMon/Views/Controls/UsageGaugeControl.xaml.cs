@@ -24,9 +24,9 @@ public partial class UsageGaugeControl : UserControl
         DependencyProperty.Register(nameof(Percentage), typeof(double), typeof(UsageGaugeControl),
             new PropertyMetadata(0.0, OnPercentageChanged));
 
-    public static readonly DependencyProperty TierTextProperty =
-        DependencyProperty.Register(nameof(TierText), typeof(string), typeof(UsageGaugeControl),
-            new PropertyMetadata(string.Empty));
+    public static readonly DependencyProperty GaugeImageSourceProperty =
+        DependencyProperty.Register(nameof(GaugeImageSource), typeof(ImageSource), typeof(UsageGaugeControl),
+            new PropertyMetadata(null, OnGaugeImageSourceChanged));
 
     public double Percentage
     {
@@ -34,10 +34,10 @@ public partial class UsageGaugeControl : UserControl
         set => SetValue(PercentageProperty, value);
     }
 
-    public string TierText
+    public ImageSource? GaugeImageSource
     {
-        get => (string)GetValue(TierTextProperty);
-        set => SetValue(TierTextProperty, value);
+        get => (ImageSource?)GetValue(GaugeImageSourceProperty);
+        set => SetValue(GaugeImageSourceProperty, value);
     }
 
     public UsageGaugeControl()
@@ -51,6 +51,11 @@ public partial class UsageGaugeControl : UserControl
         ((UsageGaugeControl)d).UpdateArc();
     }
 
+    private static void OnGaugeImageSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        ((UsageGaugeControl)d).UpdateArc();
+    }
+
     private void UpdateArc()
     {
         if (ArcPath is null || PercentageText is null)
@@ -59,26 +64,41 @@ public partial class UsageGaugeControl : UserControl
         double percentage = Percentage;
         bool isUnknown = percentage < 0;
 
-        // Update center text
-        if (isUnknown)
+        // Show face image when a custom theme provides one
+        if (GaugeImageSource != null)
         {
-            PercentageText.Text = "?";
-            EstLabel.Text = "Unknown";
+            GaugeFaceImage.Source = GaugeImageSource;
+            GaugeFaceImage.Visibility = Visibility.Visible;
+            PercentageText.Visibility = Visibility.Collapsed;
+            EstLabel.Visibility = Visibility.Collapsed;
         }
         else
         {
-            double clamped = Math.Clamp(percentage, 0.0, 100.0);
-            PercentageText.Text = clamped >= 99.5 ? "Limit" : $"~{clamped:0}%";
-            EstLabel.Text = "Est.";
+            GaugeFaceImage.Visibility = Visibility.Collapsed;
+            PercentageText.Visibility = Visibility.Visible;
+            EstLabel.Visibility = Visibility.Visible;
+
+            // Update center text
+            if (isUnknown)
+            {
+                PercentageText.Text = "?";
+                EstLabel.Text = "Unknown";
+            }
+            else
+            {
+                double clamped = Math.Clamp(percentage, 0.0, 100.0);
+                PercentageText.Text = clamped >= 99.5 ? "Limit" : $"{clamped:0}%";
+                EstLabel.Text = "Est.";
+            }
+
+            // Center the text elements horizontally within the canvas.
+            // They are positioned at Canvas.Left=80 (center), so we shift left by half their width.
+            PercentageText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            PercentageTextTranslate.X = -PercentageText.DesiredSize.Width / 2.0;
+
+            EstLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            EstLabelTranslate.X = -EstLabel.DesiredSize.Width / 2.0;
         }
-
-        // Center the text elements horizontally within the canvas.
-        // They are positioned at Canvas.Left=80 (center), so we shift left by half their width.
-        PercentageText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        PercentageTextTranslate.X = -PercentageText.DesiredSize.Width / 2.0;
-
-        EstLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        EstLabelTranslate.X = -EstLabel.DesiredSize.Width / 2.0;
 
         // Determine arc color
         SolidColorBrush arcBrush = GetBrushForPercentage(percentage);

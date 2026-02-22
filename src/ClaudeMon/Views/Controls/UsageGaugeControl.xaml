@@ -6,15 +6,21 @@
              mc:Ignorable="d"
              d:DesignWidth="180" d:DesignHeight="200">
 
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <!-- Gauge area -->
-        <Canvas Width="160" Height="160">
+    <Canvas Width="160" Height="160">
             <!-- Background track: full circle -->
             <Ellipse Width="140" Height="140"
                      Canvas.Left="10" Canvas.Top="10"
                      Stroke="{DynamicResource GaugeTrackBrush}"
                      StrokeThickness="10"
                      Fill="Transparent" />
+
+            <!-- Custom theme face image (replaces center text when non-null) -->
+            <Image x:Name="GaugeFaceImage"
+                   Canvas.Left="20" Canvas.Top="20"
+                   Width="120" Height="120"
+                   Stretch="Uniform"
+                   Visibility="Collapsed"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
             <!-- Foreground arc: drawn in code-behind -->
             <Path x:Name="ArcPath"
@@ -26,7 +32,7 @@
             <!-- Center text: percentage -->
             <TextBlock x:Name="PercentageText"
                        Canvas.Left="80" Canvas.Top="60"
-                       Text="~0%"
+                       Text="0%"
                        FontSize="28"
                        FontWeight="Bold"
                        Foreground="{DynamicResource TextPrimaryBrush}"
@@ -47,14 +53,5 @@
                     <TranslateTransform x:Name="EstLabelTranslate" />
                 </TextBlock.RenderTransform>
             </TextBlock>
-        </Canvas>
-
-        <!-- Tier info below the gauge -->
-        <TextBlock x:Name="TierInfoText"
-                   Text="{Binding TierText, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                   FontSize="11"
-                   Foreground="{DynamicResource TextSecondaryBrush}"
-                   HorizontalAlignment="Center"
-                   Margin="0,4,0,0" />
-    </StackPanel>
+    </Canvas>
 </UserControl>
