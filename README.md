@@ -1,16 +1,16 @@
-# ClaudeMon
+# BurnRate
 
 A Windows system tray application that monitors your [Claude Code](https://docs.anthropic.com/en/docs/claude-code) usage in real time.
 
-![Build](https://github.com/djdd87/ClaudeMon/actions/workflows/ci.yml/badge.svg)
-![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/djdd87/fc399a7fd7731730d631acd3039a4e18/raw/claudemon-coverage.json)
+![Build](https://github.com/djdd87/BurnRate/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/djdd87/fc399a7fd7731730d631acd3039a4e18/raw/burnrate-coverage.json)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 ![.NET](https://img.shields.io/badge/.NET-10-purple)
 
 ## Support This Project
 
-If you find ClaudeMon useful, consider buying me a coffee!
+If you find BurnRate useful, consider buying me a coffee!
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/djdd87)
 
@@ -38,7 +38,7 @@ If you find ClaudeMon useful, consider buying me a coffee!
 
 ## How It Works
 
-ClaudeMon reads data from three sources:
+BurnRate reads data from three sources:
 
 1. **JSONL conversation files** (`~/.claude*/projects/**/*.jsonl`) — scanned directly for current-day stats like messages, tokens, and sessions
 2. **stats-cache.json** — Claude Code's periodic aggregate, used for lifetime totals and cost estimates
@@ -55,20 +55,20 @@ The app passively reads your existing Claude Code OAuth token for API access —
 ## Getting Started
 
 ```bash
-git clone https://github.com/djdd87/ClaudeMon.git
-cd ClaudeMon
-dotnet run --project src/ClaudeMon/ClaudeMon.csproj
+git clone https://github.com/djdd87/BurnRate.git
+cd BurnRate
+dotnet run --project src/BurnRate/BurnRate.csproj
 ```
 
 The app will auto-discover your Claude profiles and appear in the system tray.
 
 ## Configuration
 
-Edit `src/ClaudeMon/appsettings.json`:
+Edit `src/BurnRate/appsettings.json`:
 
 ```json
 {
-  "ClaudeMon": {
+  "BurnRate": {
     "RefreshIntervalSeconds": 60,
     "Profiles": [],
     "PlanLimits": {
@@ -88,7 +88,7 @@ Edit `src/ClaudeMon/appsettings.json`:
 
 ## Supported Plans
 
-ClaudeMon recognizes these Claude plan tiers:
+BurnRate recognizes these Claude plan tiers:
 
 | Plan | Tier ID |
 |------|---------|
@@ -101,13 +101,13 @@ ClaudeMon recognizes these Claude plan tiers:
 ## Building
 
 ```bash
-dotnet build src/ClaudeMon/ClaudeMon.csproj
+dotnet build src/BurnRate/BurnRate.csproj
 ```
 
 To publish a self-contained executable:
 
 ```bash
-dotnet publish src/ClaudeMon/ClaudeMon.csproj -c Release -r win-x64 --self-contained
+dotnet publish src/BurnRate/BurnRate.csproj -c Release -r win-x64 --self-contained
 ```
 
 ## License

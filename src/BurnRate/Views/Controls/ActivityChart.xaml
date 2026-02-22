@@ -1,0 +1,40 @@
+<UserControl x:Class="BurnRate.Views.Controls.ActivityChart"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="320" d:DesignHeight="180">
+
+    <Border Style="{StaticResource CardBorder}">
+        <StackPanel>
+            <!-- Section header -->
+            <TextBlock Text="7-DAY ACTIVITY"
+                       Style="{StaticResource SectionHeader}" />
+
+            <!-- Chart area -->
+            <Grid Height="120">
+                <!-- Subtle horizontal grid line at 50% height -->
+                <Border BorderBrush="{DynamicResource ChartGridLineBrush}"
+                        BorderThickness="0,1,0,0"
+                        VerticalAlignment="Center"
+                        Margin="0,0,0,18"
+                        IsHitTestVisible="False" />
+
+                <!-- Bar columns -->
+                <UniformGrid x:Name="BarGrid"
+                             Rows="1"
+                             Columns="7" />
+            </Grid>
+
+            <!-- Empty state -->
+            <TextBlock x:Name="EmptyState"
+                       Text="No activity data available"
+                       FontSize="11"
+                       Foreground="{DynamicResource TextMutedBrush}"
+                       HorizontalAlignment="Center"
+                       Margin="0,8"
+                       Visibility="Collapsed" />
+        </StackPanel>
+    </Border>
+</UserControl>

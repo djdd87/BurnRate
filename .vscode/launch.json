@@ -2,13 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "ClaudeMon",
+      "name": "BurnRate",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/ClaudeMon/bin/Debug/net10.0-windows/ClaudeMon.dll",
+      "program": "${workspaceFolder}/src/BurnRate/bin/Debug/net10.0-windows/BurnRate.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/ClaudeMon",
+      "cwd": "${workspaceFolder}/src/BurnRate",
       "console": "internalConsole",
       "stopAtEntry": false
     }

@@ -1,14 +1,14 @@
-# CLAUDE.md - ClaudeMon
+# CLAUDE.md - BurnRate
 
 ## Project Overview
 
-ClaudeMon is a Windows system tray application that monitors Claude Code usage across multiple profiles. Built with WPF (.NET 10), it shows real-time usage percentages, token counts, session stats, and cost estimates via tray icons and a popup dashboard.
+BurnRate is a Windows system tray application that monitors Claude Code usage across multiple profiles. Built with WPF (.NET 10), it shows real-time usage percentages, token counts, session stats, and cost estimates via tray icons and a popup dashboard.
 
 ## Build & Run
 
 ```bash
-dotnet build src/ClaudeMon/ClaudeMon.csproj
-dotnet run --project src/ClaudeMon/ClaudeMon.csproj
+dotnet build src/BurnRate/BurnRate.csproj
+dotnet run --project src/BurnRate/BurnRate.csproj
 ```
 
 No tests exist yet. The app targets `net10.0-windows` and requires Windows.
@@ -16,7 +16,7 @@ No tests exist yet. The app targets `net10.0-windows` and requires Windows.
 ## Project Structure
 
 ```
-src/ClaudeMon/
+src/BurnRate/
   Models/          # Data models (ProfileConfig, UsageSummary, StatsCache, etc.)
   Services/        # Data access, file watching, live API, icon rendering
   ViewModels/      # MainViewModel, ProfileViewModel (MVVM with CommunityToolkit.Mvvm)
@@ -52,7 +52,7 @@ Token counting:
 ### 3. Anthropic Live API (authoritative percentages)
 - Endpoint: `GET https://api.anthropic.com/api/oauth/usage`
 - Auth: Bearer token read passively from `.credentials.json` (never refreshed by this app).
-- Headers: `anthropic-beta: oauth-2025-04-20`, `User-Agent: ClaudeMon/1.0`
+- Headers: `anthropic-beta: oauth-2025-04-20`, `User-Agent: BurnRate/1.0`
 - Returns 5-hour session window and 7-day weekly window utilization percentages + reset times.
 - Falls back gracefully to local estimates on any failure.
 

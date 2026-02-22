@@ -1,0 +1,57 @@
+<UserControl x:Class="BurnRate.Views.Controls.UsageGaugeControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="180" d:DesignHeight="200">
+
+    <Canvas Width="160" Height="160">
+            <!-- Background track: full circle -->
+            <Ellipse Width="140" Height="140"
+                     Canvas.Left="10" Canvas.Top="10"
+                     Stroke="{DynamicResource GaugeTrackBrush}"
+                     StrokeThickness="10"
+                     Fill="Transparent" />
+
+            <!-- Custom theme face image (replaces center text when non-null) -->
+            <Image x:Name="GaugeFaceImage"
+                   Canvas.Left="20" Canvas.Top="20"
+                   Width="120" Height="120"
+                   Stretch="Uniform"
+                   Visibility="Collapsed"
+                   RenderOptions.BitmapScalingMode="HighQuality" />
+
+            <!-- Foreground arc: drawn in code-behind -->
+            <Path x:Name="ArcPath"
+                  StrokeThickness="10"
+                  StrokeStartLineCap="Round"
+                  StrokeEndLineCap="Round"
+                  Fill="Transparent" />
+
+            <!-- Center text: percentage -->
+            <TextBlock x:Name="PercentageText"
+                       Canvas.Left="80" Canvas.Top="60"
+                       Text="0%"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       TextAlignment="Center">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform x:Name="PercentageTextTranslate" />
+                </TextBlock.RenderTransform>
+            </TextBlock>
+
+            <!-- Center text: "Est." subtitle -->
+            <TextBlock x:Name="EstLabel"
+                       Canvas.Left="80" Canvas.Top="92"
+                       Text="Est."
+                       FontSize="12"
+                       Foreground="{DynamicResource TextMutedBrush}"
+                       TextAlignment="Center">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform x:Name="EstLabelTranslate" />
+                </TextBlock.RenderTransform>
+            </TextBlock>
+    </Canvas>
+</UserControl>
