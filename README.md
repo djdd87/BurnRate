@@ -16,11 +16,11 @@ If you find BurnRate useful, consider buying me a coffee!
 
 ## Screenshots
 
+<!-- Tray icon states: no data / green / amber / red -->
+![Tray Icons](docs/tray-preview.png)
+
 <!-- Dashboard popup -->
 ![Dashboard](https://github.com/user-attachments/assets/21e87343-8b97-4e63-aa6b-52a43192fa5b)
-
-<!-- System tray icons showing color-coded usage -->
-![Tray Icons](https://github.com/user-attachments/assets/2430683a-ecab-4c0d-a349-60f3ba96aa22)
 
 ## Features
 

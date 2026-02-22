@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -66,21 +65,13 @@ public class TrayIconService : IDisposable
         var bitmap = new System.Drawing.Bitmap(size, size);
 
         using var g = System.Drawing.Graphics.FromImage(bitmap);
-        g.SmoothingMode = SmoothingMode.HighQuality;
         g.TextRenderingHint = TextRenderingHint.AntiAlias;
         g.Clear(System.Drawing.Color.Transparent);
 
         var statusColor = GetStatusColor(percentage);
-        var radius = Math.Max(size / 5, 3);
-        var bgRect = new Rectangle(0, 0, size - 1, size - 1);
 
         using var brush = new SolidBrush(statusColor);
-        using var path = RoundedRect(bgRect, radius);
-        g.FillPath(brush, path);
-
-        using var outlinePen = new System.Drawing.Pen(
-            System.Drawing.Color.FromArgb(60, 0, 0, 0), 1f);
-        g.DrawPath(outlinePen, path);
+        g.FillRectangle(brush, 0, 0, size, size);
 
         var text = GetDisplayText(percentage);
         var fontSize = GetFontSize(text, size);
@@ -95,18 +86,6 @@ public class TrayIconService : IDisposable
         g.DrawString(text, font, textBrush, new RectangleF(0, 0, size, size), sf);
 
         return bitmap;
-    }
-
-    private static GraphicsPath RoundedRect(Rectangle rect, int radius)
-    {
-        var path = new GraphicsPath();
-        var d = radius * 2;
-        path.AddArc(rect.X, rect.Y, d, d, 180, 90);
-        path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
-        path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
-        path.AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
-        path.CloseFigure();
-        return path;
     }
 
     private static string GetDisplayText(double percentage)
