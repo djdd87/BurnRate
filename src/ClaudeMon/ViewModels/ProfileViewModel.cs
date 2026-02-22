@@ -77,7 +77,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         _trayIcon = new TaskbarIcon
         {
             ToolTipText = $"{ProfileName} - Loading...",
-            Icon = _iconService.CreateNotifyIcon(-1, _themeService.ActiveCustomTheme)
+            Icon = _iconService.CreateNotifyIcon(-1)
         };
         _trayIcon.TrayLeftMouseUp += (_, _) => TrayLeftClicked?.Invoke(this);
 
@@ -116,7 +116,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         if (_trayIcon != null)
         {
             var iconPct = Usage.IsLive ? Usage.SessionPercentage : Usage.EstimatedPercentage;
-            _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct, _themeService.ActiveCustomTheme);
+            _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct);
         }
         UpdateGaugeImage();
     }
@@ -229,7 +229,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
                 var iconPct = Usage.IsLive
                     ? Usage.SessionPercentage
                     : Usage.EstimatedPercentage;
-                _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct, _themeService.ActiveCustomTheme);
+                _trayIcon.Icon = _iconService.CreateNotifyIcon(iconPct);
             }
 
             UpdateGaugeImage();

@@ -6,28 +6,25 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using ClaudeMon.Models;
 
 namespace ClaudeMon.Services;
 
 /// <summary>
-/// Generates dynamic tray icons showing either a colored percentage badge (standard themes)
-/// or a custom face image from a CustomTheme's faceImages list.
+/// Generates dynamic tray icons showing a colored percentage badge.
+/// Face images are shown in the dashboard gauge only, not the tray
+/// (tray icons are too small for faces to be legible).
 /// </summary>
 public class TrayIconService : IDisposable
 {
     private IntPtr _currentIconHandle;
     private bool _disposed;
 
-    // Cached face bitmaps — loaded once from filesystem and reused, keyed by absolute path.
-    private static readonly Dictionary<string, System.Drawing.Bitmap> _faceCache = [];
-
     /// <summary>
     /// Creates a WPF <see cref="ImageSource"/> suitable for binding to an Image control.
     /// </summary>
-    public ImageSource CreateIcon(double percentage, CustomTheme? customTheme = null)
+    public ImageSource CreateIcon(double percentage)
     {
-        using var bitmap = RenderBitmap(percentage, customTheme);
+        using var bitmap = RenderBadge(percentage);
         var hBitmap = bitmap.GetHbitmap();
         try
         {
@@ -48,11 +45,11 @@ public class TrayIconService : IDisposable
     /// <c>Hardcodet.NotifyIcon.Wpf.TaskbarIcon.Icon</c>.
     /// Tracks the native handle for proper cleanup.
     /// </summary>
-    public Icon CreateNotifyIcon(double percentage, CustomTheme? customTheme = null)
+    public Icon CreateNotifyIcon(double percentage)
     {
         CleanupCurrentHandle();
 
-        using var bitmap = RenderBitmap(percentage, customTheme);
+        using var bitmap = RenderBadge(percentage);
         _currentIconHandle = bitmap.GetHicon();
         return Icon.FromHandle(_currentIconHandle);
     }
@@ -61,45 +58,11 @@ public class TrayIconService : IDisposable
     // Rendering
     // ────────────────────────────────────────────────────────
 
-    private static System.Drawing.Bitmap RenderBitmap(double percentage, CustomTheme? customTheme)
+    private static System.Drawing.Bitmap RenderBadge(double percentage)
     {
         var size = GetSystemMetrics(SM_CXICON);
         if (size < 32) size = 32;
 
-        return customTheme?.FaceImages is { Count: > 0 }
-            ? RenderFaceImage(percentage, customTheme, size)
-            : RenderBadge(percentage, size);
-    }
-
-    /// <summary>Renders a custom theme face image scaled to the icon size.</summary>
-    private static System.Drawing.Bitmap RenderFaceImage(double percentage, CustomTheme customTheme, int size)
-    {
-        var facePath = customTheme.ResolveFacePath(percentage);
-        if (facePath == null)
-            return RenderBadge(percentage, size);
-
-        var faceBmp = LoadFaceFromFile(facePath);
-        var bitmap = new System.Drawing.Bitmap(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-        using var g = System.Drawing.Graphics.FromImage(bitmap);
-        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-        g.Clear(System.Drawing.Color.Transparent);
-        g.DrawImage(faceBmp, 0, 0, size, size);
-        return bitmap;
-    }
-
-    /// <summary>Loads a face bitmap from the filesystem, caching after first load.</summary>
-    private static System.Drawing.Bitmap LoadFaceFromFile(string absolutePath)
-    {
-        if (_faceCache.TryGetValue(absolutePath, out var cached)) return cached;
-        var bmp = new System.Drawing.Bitmap(absolutePath);
-        _faceCache[absolutePath] = bmp;
-        return bmp;
-    }
-
-    /// <summary>Renders the standard colored badge with a percentage number.</summary>
-    private static System.Drawing.Bitmap RenderBadge(double percentage, int size)
-    {
         var bitmap = new System.Drawing.Bitmap(size, size);
 
         using var g = System.Drawing.Graphics.FromImage(bitmap);
@@ -129,8 +92,7 @@ public class TrayIconService : IDisposable
             LineAlignment = StringAlignment.Center
         };
 
-        var textRect = new RectangleF(0, 0, size, size);
-        g.DrawString(text, font, textBrush, textRect, sf);
+        g.DrawString(text, font, textBrush, new RectangleF(0, 0, size, size), sf);
 
         return bitmap;
     }
@@ -159,8 +121,8 @@ public class TrayIconService : IDisposable
         var baseFraction = text.Length switch
         {
             >= 3 => 0.55f,
-            2 => 0.65f,
-            _ => 0.72f,
+            2    => 0.65f,
+            _    => 0.72f,
         };
         return Math.Max(iconSize * baseFraction, 8f);
     }
