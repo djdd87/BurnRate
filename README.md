@@ -112,6 +112,65 @@ To publish a self-contained executable:
 dotnet publish src/BurnRate/BurnRate.csproj -c Release -r win-x64 --self-contained
 ```
 
+## Custom Themes
+
+Themes live in the `CustomThemes/` directory at the repo root. Each theme is a subfolder containing a `theme.json` manifest and optional colour and face-image assets.
+
+```
+CustomThemes/
+└── MyTheme/
+    ├── theme.json
+    ├── Colors.xaml        # optional — overrides dashboard colours
+    └── faces/             # optional — gauge face images
+        ├── face_0.png
+        └── ...
+```
+
+Themes appear in the **right-click tray menu → Theme** and are selected at runtime with no restart required.
+
+### theme.json
+
+```json
+{
+  "displayName": "My Theme",
+  "colorsDictionary": "Colors.xaml",
+  "faceImages": [
+    { "upToPercent": 20,  "image": "faces/face_0.png" },
+    { "upToPercent": 40,  "image": "faces/face_1.png" },
+    { "upToPercent": 60,  "image": "faces/face_2.png" },
+    { "upToPercent": 80,  "image": "faces/face_3.png" },
+    { "upToPercent": 100, "image": "faces/face_4.png" },
+    { "upToPercent": 999, "image": "faces/face_dead.png" }
+  ]
+}
+```
+
+Both `colorsDictionary` and `faceImages` are optional — you can override just the colours, just the gauge faces, or both.
+
+Face images replace the percentage text in the circular gauge. The image whose `upToPercent` is the first value ≥ the current usage percentage is shown.
+
+### Colors.xaml
+
+A standard WPF `ResourceDictionary` that overrides any of the named colour keys used by the dashboard:
+
+| Key | Purpose |
+|-----|---------|
+| `BgPrimary` / `BgSecondary` | Window and title bar backgrounds |
+| `BgCard` / `BgCardHover` | Stat card backgrounds |
+| `AccentPrimary` / `AccentSecondary` | Highlights and active indicators |
+| `StatusGreen` / `StatusAmber` / `StatusRed` / `StatusGrey` | Usage threshold colours |
+| `TextPrimary` / `TextSecondary` / `TextMuted` | Text hierarchy |
+| `GaugeTrack` | Gauge ring background |
+| `ChartGridLine` | Activity chart grid |
+
+Each colour key must also have a matching `SolidColorBrush` key with the `Brush` suffix (e.g. `BgPrimaryBrush`). See [`CustomThemes/Doom/Colors.xaml`](CustomThemes/Doom/Colors.xaml) for a complete example.
+
+### Doom theme
+
+The built-in Doom theme ships as an example. It replaces the dashboard colours with a dark blood-red palette and swaps the gauge for Doomguy's face, which reacts to your token usage.
+
+<!-- TODO: add Doom theme screenshot -->
+
 ## License
 
 [MIT](LICENSE)
