@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="305" height="106">
+  <rect fill="#202020" width="305" height="106"/>
+
+  <!-- No data (grey) -->
+  <rect fill="#9E9E9E" x="12"  y="12" width="64" height="64"/>
+  <text fill="white" font-family="Segoe UI,sans-serif" font-size="46" font-weight="bold" text-anchor="middle" dominant-baseline="central" x="44" y="44">?</text>
+  <text fill="#C8C8C8" font-family="Segoe UI,sans-serif" font-size="11" text-anchor="middle" x="44" y="92">No data</text>
+
+  <!-- Green ≤50% -->
+  <rect fill="#4CAF50" x="84"  y="12" width="64" height="64"/>
+  <text fill="white" font-family="Segoe UI,sans-serif" font-size="41" font-weight="bold" text-anchor="middle" dominant-baseline="central" x="116" y="44">24</text>
+  <text fill="#C8C8C8" font-family="Segoe UI,sans-serif" font-size="11" text-anchor="middle" x="116" y="92">24%</text>
+
+  <!-- Amber 51–80% -->
+  <rect fill="#FF9800" x="156" y="12" width="64" height="64"/>
+  <text fill="white" font-family="Segoe UI,sans-serif" font-size="41" font-weight="bold" text-anchor="middle" dominant-baseline="central" x="188" y="44">67</text>
+  <text fill="#C8C8C8" font-family="Segoe UI,sans-serif" font-size="11" text-anchor="middle" x="188" y="92">67%</text>
+
+  <!-- Red 81–100% -->
+  <rect fill="#F44336" x="228" y="12" width="64" height="64"/>
+  <text fill="white" font-family="Segoe UI,sans-serif" font-size="41" font-weight="bold" text-anchor="middle" dominant-baseline="central" x="260" y="44">89</text>
+  <text fill="#C8C8C8" font-family="Segoe UI,sans-serif" font-size="11" text-anchor="middle" x="260" y="92">89%</text>
+</svg>
