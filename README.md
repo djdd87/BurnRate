@@ -169,7 +169,7 @@ Each colour key must also have a matching `SolidColorBrush` key with the `Brush`
 
 The built-in Doom theme ships as an example. It replaces the dashboard colours with a dark blood-red palette and swaps the gauge for Doomguy's face, which reacts to your token usage.
 
-<!-- TODO: add Doom theme screenshot -->
+![Doom theme screenshot](docs/screenshots/doom_theme.png)
 
 ## License
 
