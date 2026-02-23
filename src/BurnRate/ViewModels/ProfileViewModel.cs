@@ -280,6 +280,14 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
                         if (DateTime.TryParse(liveUsage.SevenDay.ResetsAt, null,
                                 System.Globalization.DateTimeStyles.RoundtripKind, out var weeklyReset))
                             summary.WeeklyResetsAt = weeklyReset.ToLocalTime();
+
+                        // The plan limits in appsettings.json are approximations. When the live API
+                        // reports a weekly utilization percentage, back-calculate the real effective
+                        // limit so that runway is computed against what Anthropic actually measures,
+                        // not a potentially stale/wrong configured value.
+                        if (liveUsage.SevenDay.Utilization > 0 && summary.WeeklyTokensUsed > 0)
+                            summary.WeeklyTokenLimit = (long)Math.Round(
+                                summary.WeeklyTokensUsed / (liveUsage.SevenDay.Utilization / 100.0));
                     }
 
                     // Use the live session percentage as the primary gauge/icon metric

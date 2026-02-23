@@ -53,12 +53,12 @@ public static class MetricRegistry
 
         new("Runway",
             "WEEKLY RUNWAY",
-            "Estimated days until the weekly token limit is reached at the current daily burn rate. 'Resets first' means the window resets before you'd hit the limit.",
+            "Estimated days until the weekly token limit is reached at the current daily burn rate. 'Resets first' means the window resets before you'd hit the limit. 'At limit' means you've reached or exceeded your weekly token cap — new requests will be blocked until the window resets.",
             u => u.RunwayText),
 
         new("SessionRunway",
             "SESSION RUNWAY",
-            "Estimated time until the 5-hour session limit is reached at the current session burn rate. Requires live API data.",
+            "Estimated time until the 5-hour session limit is reached at the current session burn rate. Requires live API data. 'Resets first' means the session window resets before you'd hit the cap. 'At limit' means the session is at or above 99.5% — you're effectively rate-limited until the session resets.",
             u => u.SessionRunwayText),
 
         new("EstimatedCost",
