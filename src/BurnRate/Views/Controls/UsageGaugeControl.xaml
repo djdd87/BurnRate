@@ -16,8 +16,8 @@
 
             <!-- Custom theme face image (replaces center text when non-null) -->
             <Image x:Name="GaugeFaceImage"
-                   Canvas.Left="20" Canvas.Top="20"
-                   Width="120" Height="120"
+                   Canvas.Left="35" Canvas.Top="35"
+                   Width="90" Height="90"
                    Stretch="Uniform"
                    Visibility="Collapsed"
                    RenderOptions.BitmapScalingMode="HighQuality" />
