@@ -231,14 +231,14 @@ public sealed class MetricsManagerViewModelTests : IDisposable
     public void Remove_ReinsertsMaintainingRegistryOrder()
     {
         var vm = new MetricsManagerViewModel(_mainVm);
-        // Initial available (registry order): TodayMessages(0), TodayTokens(1), Runway(5), ...
-        // Removing WeeklyTokens (registry idx 3) should land it at position 2
-        // (after TodayMessages and TodayTokens, before Runway)
+        // Initial available (registry order): UsageLimits(0), TodayMessages(1), TodayTokens(2), Runway(6), ...
+        // Removing WeeklyTokens (registry idx 4) should land it at position 3
+        // (after UsageLimits, TodayMessages, TodayTokens, before Runway)
         var weeklyTokens = vm.EnabledMetrics.First(m => m.Id == "WeeklyTokens");
 
         vm.RemoveCommand.Execute(weeklyTokens);
 
-        Assert.Equal("WeeklyTokens", vm.AvailableMetrics[2].Id);
+        Assert.Equal("WeeklyTokens", vm.AvailableMetrics[3].Id);
     }
 
     [Fact]
