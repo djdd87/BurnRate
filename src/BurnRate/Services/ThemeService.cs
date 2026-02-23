@@ -80,7 +80,11 @@ public sealed class ThemeService : IDisposable
             };
 
         var dict = new System.Windows.ResourceDictionary { Source = uri };
-        System.Windows.Application.Current.Resources.MergedDictionaries[0] = dict;
+        var merged = System.Windows.Application.Current.Resources.MergedDictionaries;
+        if (merged.Count > 0)
+            merged[0] = dict;
+        else
+            merged.Add(dict);
 
         ThemeChanged?.Invoke(resolved);
     }
@@ -95,8 +99,9 @@ public sealed class ThemeService : IDisposable
                 1);
             return value is int v && v == 0 ? AppThemeMode.Dark : AppThemeMode.Light;
         }
-        catch
+        catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"[ThemeService] Could not read system theme from registry: {ex.Message}");
             return AppThemeMode.Dark;
         }
     }
@@ -169,8 +174,9 @@ public sealed class ThemeService : IDisposable
 
             return new(mode, customId, metrics.Count > 0 ? metrics : MetricRegistry.DefaultEnabled);
         }
-        catch
+        catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"[ThemeService] Failed to load settings: {ex.Message}");
             return new(AppThemeMode.Dark, null, MetricRegistry.DefaultEnabled);
         }
     }
@@ -195,7 +201,10 @@ public sealed class ThemeService : IDisposable
             });
             File.WriteAllText(path, json);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ThemeService] Failed to save settings: {ex.Message}");
+        }
     }
 
     public void Dispose()

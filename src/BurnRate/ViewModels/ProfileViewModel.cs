@@ -20,6 +20,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
     private bool _disposed;
     private MainViewModel? _mainVm;
     private System.ComponentModel.PropertyChangedEventHandler? _mainVmPropertyChanged;
+    private readonly System.Threading.SemaphoreSlim _refreshLock = new(1, 1);
 
     [ObservableProperty]
     private string _profileName;
@@ -202,6 +203,9 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
 
     public async Task RefreshAsync()
     {
+        if (!await _refreshLock.WaitAsync(0))
+            return; // A refresh is already in progress; skip this one.
+
         try
         {
             // Load local stats for detailed breakdowns (messages, model usage, activity chart)
@@ -320,6 +324,10 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
         {
             System.Diagnostics.Debug.WriteLine($"[{ProfileName}] Refresh error: {ex.Message}");
             TooltipText = $"{ProfileName} - Error loading data";
+        }
+        finally
+        {
+            _refreshLock.Release();
         }
     }
 
@@ -518,5 +526,7 @@ public partial class ProfileViewModel : ObservableObject, IDisposable
             _trayIcon.Dispose();
             _trayIcon = null;
         }
+
+        _refreshLock.Dispose();
     }
 }

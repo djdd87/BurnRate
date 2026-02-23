@@ -20,7 +20,7 @@ public partial class App : Application
         _guard = new SingleInstanceGuard();
         if (!_guard.TryAcquire())
         {
-            MessageBox.Show("ClaudMon is already running.", "ClaudMon",
+            MessageBox.Show("BurnRate is already running.", "BurnRate",
                 MessageBoxButton.OK, MessageBoxImage.Information);
             Shutdown();
             return;
@@ -66,9 +66,9 @@ public partial class App : Application
         {
             MessageBox.Show(
                 "No Claude profiles found.\n\n" +
-                "ClaudMon looks for directories matching ~/.claude* that contain .credentials.json.\n" +
+                "BurnRate looks for directories matching ~/.claude* that contain .credentials.json.\n" +
                 "You can also configure profiles explicitly in appsettings.json.",
-                "ClaudMon - No Profiles",
+                "BurnRate - No Profiles",
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             Shutdown();
             return;

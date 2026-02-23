@@ -61,7 +61,15 @@ public sealed class LiveUsageService : IDisposable
         }
 
         var json = await response.Content.ReadAsStreamAsync();
-        return await JsonSerializer.DeserializeAsync<LiveUsageResponse>(json, JsonOptions);
+        try
+        {
+            return await JsonSerializer.DeserializeAsync<LiveUsageResponse>(json, JsonOptions);
+        }
+        catch (JsonException ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[LiveUsageService] Failed to deserialize response: {ex.Message}");
+            return null;
+        }
     }
 
     private async Task<string?> GetTokenAsync()

@@ -31,11 +31,15 @@ public static class CustomThemeLoader
                     ? dn.GetString() ?? Path.GetFileName(themeDir)
                     : Path.GetFileName(themeDir);
 
+                // Resolve the canonical theme directory path once for validation below.
+                var themeDirFull = Path.GetFullPath(themeDir) + Path.DirectorySeparatorChar;
+
                 string? colorsPath = null;
                 if (root.TryGetProperty("colorsDictionary", out var cd) && cd.GetString() is string cdName)
                 {
-                    var candidate = Path.Combine(themeDir, cdName);
-                    if (File.Exists(candidate))
+                    var candidate = Path.GetFullPath(Path.Combine(themeDir, cdName));
+                    // Reject paths that escape the theme directory (path traversal guard).
+                    if (candidate.StartsWith(themeDirFull, StringComparison.OrdinalIgnoreCase) && File.Exists(candidate))
                         colorsPath = candidate;
                 }
 
@@ -47,7 +51,9 @@ public static class CustomThemeLoader
                         if (!item.TryGetProperty("upToPercent", out var pct)) continue;
                         if (!item.TryGetProperty("image", out var img)) continue;
 
-                        var imagePath = Path.Combine(themeDir, img.GetString() ?? "");
+                        var imagePath = Path.GetFullPath(Path.Combine(themeDir, img.GetString() ?? ""));
+                        // Reject paths that escape the theme directory (path traversal guard).
+                        if (!imagePath.StartsWith(themeDirFull, StringComparison.OrdinalIgnoreCase)) continue;
                         if (!File.Exists(imagePath)) continue;
 
                         faces.Add(new FaceImageEntry(pct.GetDouble(), imagePath));
