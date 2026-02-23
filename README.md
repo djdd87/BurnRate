@@ -22,11 +22,11 @@ If you find BurnRate useful, consider buying me a coffee!
 
 ### Dashboard
 
-![Dashboard](docs/screenshots/dashboard_light.png)
+![Dashboard](docs/screenshots/dashboard_light.png?v=0.5.1)
 
 ### Manage Metrics
 
-![Manage Metrics](docs/screenshots/manage_metrics_light.png)
+![Manage Metrics](docs/screenshots/manage_metrics_light.png?v=0.5.1)
 
 ## Features
 
