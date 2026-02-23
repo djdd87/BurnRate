@@ -364,12 +364,12 @@ public class FileWatcherServiceTests
             // Act - Fire first event
             var testFile1 = Path.Combine(tempDir.FullName, "test1.json");
             File.WriteAllText(testFile1, "{}");
-            System.Threading.Thread.Sleep(600); // Wait past debounce
+            System.Threading.Thread.Sleep(1500); // Wait past debounce + FSW latency margin
 
             // Fire second event
             var testFile2 = Path.Combine(tempDir.FullName, "test2.json");
             File.WriteAllText(testFile2, "{}");
-            System.Threading.Thread.Sleep(600);
+            System.Threading.Thread.Sleep(1500);
 
             // Assert - Should have recorded 2 separate events with gap > 500ms
             lock (lockObj)
