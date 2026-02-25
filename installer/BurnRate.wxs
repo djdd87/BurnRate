@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <Package
     Name="BurnRate"
     Manufacturer="BurnRate"
@@ -13,6 +14,7 @@
 
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="BurnRate">
+        <!-- Optional: add BurnRate to Windows startup -->
         <Component Id="AutoStart" Guid="3C4D5E6F-7A8B-9C0D-1E2F-3A4B5C6D7E8F">
           <RegistryValue
             Root="HKCU"
@@ -53,10 +55,44 @@
       <Files Include="$(var.PublishDir)\*" />
     </ComponentGroup>
 
-    <Feature Id="Main" Title="BurnRate" Level="1">
+    <!-- Required: application files and start menu shortcut -->
+    <Feature Id="Main" Title="BurnRate" Level="1" Absent="disallow"
+             Description="The BurnRate system tray application and Start Menu shortcut.">
       <ComponentGroupRef Id="PublishFiles" />
-      <ComponentRef Id="AutoStart" />
       <ComponentRef Id="StartMenuShortcut" />
     </Feature>
+
+    <!-- Optional: register BurnRate to launch automatically at Windows login -->
+    <Feature Id="StartupLaunch" Title="Start with Windows" Level="1"
+             Description="Automatically start BurnRate when you log in to Windows.">
+      <ComponentRef Id="AutoStart" />
+    </Feature>
+
+    <!-- Exit dialog: offer to launch BurnRate immediately after install completes.
+         Scheduled in InstallUISequence with OnExit="success" so the action fires
+         after the user clicks Finish — meaning the checkbox state is respected. -->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch BurnRate" />
+    <Property Id="WixShellExecTarget" Value="[INSTALLFOLDER]BurnRate.exe" />
+
+    <CustomAction Id="LaunchBurnRate"
+      BinaryRef="Wix4UtilCA_X64"
+      DllEntry="WixShellExec"
+      Impersonate="yes"
+      Execute="immediate"
+      Return="asyncNoWait" />
+
+    <!-- Run in UI sequence so the action fires after the user clicks Finish
+         (after WIXUI_EXITDIALOGOPTIONALCHECKBOX reflects their final choice). -->
+    <InstallUISequence>
+      <Custom Action="LaunchBurnRate" OnExit="success">
+        WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 AND NOT Installed
+      </Custom>
+    </InstallUISequence>
+
+    <!-- Wizard: shows license, feature tree (with "Start with Windows" toggle),
+         install directory browser, progress, and exit dialog with launch checkbox. -->
+    <ui:WixUI Id="WixUI_FeatureTree" InstallDirectory="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
   </Package>
 </Wix>
