@@ -409,11 +409,11 @@ public class FileWatcherServiceTests
             // Act - Create a file
             var testFile = Path.Combine(tempDir.FullName, "test.json");
             File.WriteAllText(testFile, "{}");
-            System.Threading.Thread.Sleep(700); // Wait past debounce
+            System.Threading.Thread.Sleep(1500); // Wait past debounce (generous for CI)
 
             // Modify the file
             File.AppendAllText(testFile, ",{}");
-            System.Threading.Thread.Sleep(700); // Wait past debounce
+            System.Threading.Thread.Sleep(1500); // Wait past debounce (generous for CI)
 
             // Assert
             lock (lockObj)
