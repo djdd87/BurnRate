@@ -6,7 +6,7 @@
     { "upToPercent": 40,  "image": "faces/face_1.png" },
     { "upToPercent": 60,  "image": "faces/face_2.png" },
     { "upToPercent": 80,  "image": "faces/face_3.png" },
-    { "upToPercent": 100, "image": "faces/face_4.png" },
+    { "upToPercent": 99,  "image": "faces/face_4.png" },
     { "upToPercent": 999, "image": "faces/face_dead.png" }
   ]
 }
