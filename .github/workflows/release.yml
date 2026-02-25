@@ -47,6 +47,11 @@ jobs:
       - name: Install WiX
         run: dotnet tool install --global wix
 
+      - name: Add WiX extensions
+        run: |
+          wix extension add WixToolset.UI.wixext
+          wix extension add WixToolset.Util.wixext
+
       - name: Build MSI
         run: >
           wix build installer/BurnRate.wxs
