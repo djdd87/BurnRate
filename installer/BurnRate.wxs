@@ -5,6 +5,7 @@
     Name="BurnRate"
     Manufacturer="BurnRate"
     Version="$(var.Version)"
+    Platform="x64"
     UpgradeCode="7A3B8C1D-4E5F-6A7B-8C9D-0E1F2A3B4C5D">
 
     <MajorUpgrade
