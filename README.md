@@ -167,9 +167,15 @@ Each colour key must also have a matching `SolidColorBrush` key with the `Brush`
 
 ### Doom theme
 
-The built-in Doom theme ships as an example. It replaces the dashboard colours with a dark blood-red palette and swaps the gauge for Doomguy's face, which reacts to your token usage.
+The Doom theme replaces the dashboard colours with a dark blood-red palette and swaps the gauge for Doomguy's face, which reacts to your token usage.
 
 ![Doom theme screenshot](docs/screenshots/doom_theme.png)
+
+The face sprites are extracted from `DOOM.WAD` (© id Software), so the theme is **not included in the installer**. To use it you'll need a copy of DOOM and the theme files from this repo:
+
+1. Copy the [`CustomThemes/Doom/`](CustomThemes/Doom/) folder from the repo into the `CustomThemes/` directory next to your `BurnRate.exe` (e.g. `C:\Program Files\BurnRate\CustomThemes\Doom\`)
+2. Extract the six face sprites from your own `DOOM.WAD` and place them in the `faces/` subfolder, named `face_0.png` – `face_4.png` and `face_dead.png`
+3. Restart BurnRate — the Doom theme will appear in **right-click → Theme**
 
 ## License
 
