@@ -10,7 +10,7 @@ public static class WindowPositioner
     {
         var workArea = SystemParameters.WorkArea;
 
-        window.Left = workArea.Right - window.Width - Margin;
-        window.Top = workArea.Bottom - window.Height - Margin;
+        window.Left = workArea.Right - window.ActualWidth - Margin;
+        window.Top = workArea.Bottom - window.ActualHeight - Margin;
     }
 }
