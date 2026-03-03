@@ -63,6 +63,7 @@ jobs:
           wix build installer/BurnRate.wxs installer/PublishFiles.wxs `
             -ext WixToolset.UI.wixext `
             -ext WixToolset.Util.wixext `
+            -arch x64 `
             -b installer `
             -d PublishDir=publish `
             -d Version=${{ steps.version.outputs.version }} `
